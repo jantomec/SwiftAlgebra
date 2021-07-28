@@ -2,10 +2,18 @@
     @testable import SwiftLinearAlgebra
 
     final class SwiftLinearAlgebraTests: XCTestCase {
-        func testExample() {
-            // This is an example of a functional test case.
-            // Use XCTAssert and related functions to verify your tests produce the correct
-            // results.
-            XCTAssertEqual(SwiftLinearAlgebra().text, "Hello, World!")
+        func testMatrixInitSuccessful() {
+            // This function tests if matrix is successfully constructed.
+            let input: [[Int]] = [[1,2,3]]
+            let output = try? Matrix(input)
+            let referenceInput: [[Double]] = [[1,2,3]]
+            let expectedOutput = try? Matrix(referenceInput)
+            XCTAssertEqual(output, expectedOutput)
+        }
+        func testMatrixInitUnsuccessful() {
+            // This function tests if matrix is successfully constructed.
+            let input: [[Int]] = [[1,2,3], [1,2]]
+            let output = try? Matrix(input)
+            XCTAssertEqual(output, nil)
         }
     }

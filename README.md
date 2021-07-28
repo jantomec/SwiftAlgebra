@@ -5,7 +5,7 @@ A small standalone package for linear algebra.
 ## Features
 
 Currenlty supported features:
-- None
+- Matrix
 
 ## Installation
 
