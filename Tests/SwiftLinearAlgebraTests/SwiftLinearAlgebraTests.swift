@@ -239,6 +239,58 @@
             let expectedResult = 3.7416573867739413
             XCTAssertEqual(norm(vector: A), expectedResult, accuracy: 1e-12)
         }
+        func testMatrixLUDecomposition() {
+            let A = Matrix([[0, 2, 4],
+                            [4, 2, 1],
+                            [-1, 0, -1]])
+            let decomposed = try! LUDecompositionDoolittle(A)
+            let expectedResult = Matrix([[4, 2, 1],
+                                         [0, 2, 4],
+                                         [-0.25, 0.25, -1.75]])
+            XCTAssertEqual(decomposed.LU, expectedResult)
+        }
+        func testMatrixLUSolve() {
+            let A = Matrix([[0, 2, 4],
+                            [4, 2, 1],
+                            [-1, 0, -1]])
+            let b = Matrix(vector: [-1, 1, 3], type: .column)
+            let result = try! solve(A: A, b: b)
+            let expectedResult = Matrix(vector: [-1, 3.5, -2], type: .column)
+            XCTAssertEqual(result, expectedResult)
+        }
+        func testMatrixLUSolveUnsuccessful() {
+            let A = Matrix([[0, 2, 4],
+                            [0, 4, 8],
+                            [-1, 0, -1]])
+            let b = Matrix(vector: [-1, 1, 3], type: .column)
+            let check: Bool
+            do {
+                _ = try solve(A: A, b: b)
+                check = false
+            } catch LinearAlgebraError.singularMatrix {
+                check = true
+            } catch {
+                check = false
+            }
+            XCTAssertTrue(check)
+        }
+        func testMatrixLUInvert() {
+            let A = Matrix([[1, 2, 3],
+                            [3, 2, 1],
+                            [-1, 0, -1]])
+            let result = try! invert(A: A)
+            let expectedResult = Matrix([[-0.25, 0.25, -0.5], [0.25, 0.25, 1], [0.25, -0.25, -0.5]])
+            let tolerance = 1e-12
+            var correct = true
+            for i in 0..<result.shape.nRows {
+                for j in 0..<result.shape.nCols {
+                    if abs(result[i,j] - expectedResult[i,j]) > tolerance {
+                        correct = false
+                    }
+                }
+            }
+            XCTAssertTrue(correct)
+        }
     }
 
     final class SwiftLinearAlgebraLieGroupTests: XCTestCase {

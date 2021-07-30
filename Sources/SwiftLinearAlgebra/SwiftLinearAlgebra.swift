@@ -692,13 +692,7 @@ extension Matrix {
 
 extension Matrix {
     var transposed: Matrix {
-        var transposedMatrix = Matrix(value: 0, shape: (self.shape.nCols, self.shape.nRows))
-        for i in 0..<self.shape.nRows {
-            for j in 0..<self.shape.nCols {
-                transposedMatrix[j,i] = self[i,j]
-            }
-        }
-        return transposedMatrix
+        return transpose(self)
     }
 }
 
@@ -859,4 +853,126 @@ func norm(vector: Matrix) -> Double {
         square += vector[i,0]**2
     }
     return square.squareRoot()
+}
+
+func transpose(_ matrix: Matrix) -> Matrix {
+    var transposedMatrix = Matrix(value: 0, shape: (matrix.shape.nCols, matrix.shape.nRows))
+    for i in 0..<matrix.shape.nRows {
+        for j in 0..<matrix.shape.nCols {
+            transposedMatrix[j,i] = matrix[i,j]
+        }
+    }
+    return transposedMatrix
+}
+
+func diagonal(_ matrix: Matrix) -> Matrix {
+    precondition(matrix.shape.nRows == matrix.shape.nCols, "A square matrix is required.")
+    var diag = Matrix(value: 0, shape: (matrix.shape.nRows, 1))
+    for i in 0..<matrix.shape.nRows {
+        diag[i] = matrix[i,i]
+    }
+    return diag
+}
+
+func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
+    precondition(A.shape.nRows == A.shape.nCols, "LU decomposition requires a square matrix.")
+    var LU = A
+    let n = A.shape.nRows
+    precondition(n == A.shape.nCols, "LU decomposition requires a square matrix.")
+    var P: [Int] = Array(repeating: 0, count: n+1)
+    for i in 0...n {
+        P[i] = i
+    }
+    var maxA: Double
+    var imax: Int
+    for i in 0..<n {
+        maxA = 0.0
+        imax = i
+        for k in i..<n {
+            let absA = abs(A[k,i])
+            if absA > maxA {
+                maxA = absA
+                imax = k
+            }
+        }
+        if maxA < tolerance {
+            throw LinearAlgebraError.degenerateMatrix
+        }
+        if imax != i {
+            // pivoting P
+            let j = P[i]
+            P[i] = P[imax]
+            P[imax] = j
+            // pivoting rows of LU
+            let ptr = LU[i, .all]
+            LU[i, .all] = LU[imax, .all]
+            LU[imax, .all] = ptr
+            // counting pivots starting from N (for determinant)
+            P[n] += 1
+        }
+        for j in i+1..<n {
+            LU[j,i] /= LU[i,i];
+            for k in i+1..<n {
+                LU[j,k] -= LU[j,i] * LU[i,k];
+            }
+        }
+    }
+    for i in 0..<n {
+        if LU[i,i] == 0 {
+            throw LinearAlgebraError.singularMatrix
+        }
+    }
+    return (LU, P)
+}
+
+func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
+    var x = b
+    let n = LU.shape.nRows
+    precondition(n == LU.shape.nCols, "LU decomposition requires a square matrix.")
+    for i in 0..<n {
+        x[i] = b[P[i]]
+        for k in 0..<i {
+            x[i] -= LU[i,k] * x[k]
+        }
+    }
+    for i in 1...n {
+        let j = n-i
+        for k in j+1..<n {
+            x[j] -= LU[j,k] * x[k]
+        }
+        x[j] /= LU[j,j];
+    }
+    return x
+}
+
+func solve(A: Matrix, b: Matrix) throws -> Matrix {
+    let decomposition = try LUDecompositionDoolittle(A)
+    return LUSolve(LU: decomposition.LU, P: decomposition.P, b: b)
+}
+
+func LUInvert(LU: Matrix, P: [Int]) -> Matrix {
+    var IA = LU
+    let n = LU.shape.nRows
+    precondition(n == LU.shape.nCols, "LU decomposition requires a square matrix.")
+    for j in 0..<n {
+        for i in 0..<n {
+            IA[i,j] = P[i] == j ? 1 : 0
+            for k in 0..<i {
+                IA[i,j] -= LU[i,k] * IA[k,j]
+            }
+        }
+        for l in 1...n {
+            let i = n - l
+            for k in i+1..<n {
+                IA[i,j] -= LU[i,k] * IA[k,j]
+            }
+            IA[i,j] /= LU[i,i]
+        }
+    }
+    return IA
+}
+
+func invert(A: Matrix) throws -> Matrix {
+    let decomposition = try LUDecompositionDoolittle(A)
+    return LUInvert(LU: decomposition.LU, P: decomposition.P)
 }
