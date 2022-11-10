@@ -16,19 +16,39 @@ https://developer.apple.com/documentation/swift_packages/adding_package_dependen
 
 ## Requirements
 
-SwiftLinearAlgebra includes only pure Swift code making this package cross-platform. The latest version of Swift 5.3 is recommended.
+SwiftLinearAlgebra includes only pure Swift code making this package cross-platform. The latest version of Swift is recommended.
 
 ## Usage
 
 The following code snippets should help you getting the gist of it.
 
-```Swift
-a = 4
+Construct an identity matrix
+```swift
+var I = 
+```
+We can then do arithmetic operations
+```swift
+var I = 
+```
+or even matrix multiplication
+```swift
+var I = 
+```
+We can also invert the matrix or solve a system of equations
+```swift
+var I = 
+```
+We can also extract submatrices while keeping the reference alive
+```swift
+var I = 
 ```
 
 ## Contribution
 
-Right now not possible.
+Contact me personally.
+
+## License
+
 [<img src="https://github.com/tomecj/SwiftLinearAlgebra/blob/master/Resources/1280px-MIT_logo.png" alt="drawing" height="20"/>](https://github.com/tomecj/SwiftLinearAlgebra/blob/master/LICENSE)
 
 ## Resources

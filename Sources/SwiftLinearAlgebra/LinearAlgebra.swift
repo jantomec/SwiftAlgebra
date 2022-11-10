@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum LinearAlgebraError: Error {
+public enum LinearAlgebraError: Error {
     case degenerateMatrix
     case singularMatrix
 }
@@ -77,7 +77,18 @@ private func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
     return x
 }
 
-func solve(A: Matrix, b: Matrix) throws -> Matrix {
+/// Solve a linear system of equations.
+///
+/// Solve a system of equations defined by the matrix of coefficients `A` and the right-hand-side vector `b`, i. e. A.x = b. Vector x represents the unknowns.
+///
+/// - Precondition: Only square matrices are allowed.
+///
+/// - Parameters:
+///   - A: Matrix of coefficients
+///   - b: Right-hand-side vector
+///
+/// - Returns: Vector of unknowns.
+public func solve(A: Matrix, b: Matrix) throws -> Matrix {
     let decomposition = try LUDecompositionDoolittle(A)
     return LUSolve(LU: decomposition.LU, P: decomposition.P, b: b)
 }
@@ -111,7 +122,7 @@ private func LUInvert(LU: Matrix, P: [Int]) -> Matrix {
 /// - Parameter A: Matrix to be inverted.
 ///
 /// - Returns: A new matrix, inverse of the input.
-func invert(_ A: Matrix) throws -> Matrix {
+public func invert(_ A: Matrix) throws -> Matrix {
     let decomposition = try LUDecompositionDoolittle(A)
     return LUInvert(LU: decomposition.LU, P: decomposition.P)
 }
