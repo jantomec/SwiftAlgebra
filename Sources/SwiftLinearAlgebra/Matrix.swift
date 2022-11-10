@@ -14,7 +14,7 @@ private class Datum {
     }
 }
 
-enum SpecialMatrixIndex {
+public enum SpecialMatrixIndex {
     case all
 }
 
@@ -47,7 +47,7 @@ private func isMatrix(_ A: [[Double]]) -> Bool {
 /// ```swift
 /// A[.all, 0].T = c  // [[4, 2], [-1, 0]]
 /// ```
-class Matrix {
+public class Matrix {
     private var data: [Datum]
     
     /// Shape of the matrix.
@@ -269,7 +269,7 @@ class Matrix {
 }
 
 extension Matrix: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         var d: String = "["
         for i in 0..<self.shape.rows {
             d += "["
