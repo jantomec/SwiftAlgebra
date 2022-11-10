@@ -77,6 +77,17 @@ private func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
     return x
 }
 
+/// Solve a linear system of equations.
+///
+/// Solve a system of equations defined by the matrix of coefficients `A` and the right-hand-side vector `b`, i. e. A.x = b. Vector x represents the unknowns.
+///
+/// - Precondition: Only square matrices are allowed.
+///
+/// - Parameters:
+///   - A: Matrix of coefficients
+///   - b: Right-hand-side vector
+///
+/// - Returns: Vector of unknowns.
 func solve(A: Matrix, b: Matrix) throws -> Matrix {
     let decomposition = try LUDecompositionDoolittle(A)
     return LUSolve(LU: decomposition.LU, P: decomposition.P, b: b)

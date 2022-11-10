@@ -26,13 +26,49 @@ private func isMatrix(_ A: [[Double]]) -> Bool {
     return true
 }
 
+/// Basic class for representing matrices.
+///
+/// This class provides an intuitive abstract representation of a mathematical object called matrix. It references the data through pointers permitting advanced manipulation through slicing.
+///
+/// **Getting started with Matrices:**
+///
+/// Create a new matrix from existing double array:
+/// ```swift
+/// let a: [[Double]] = [[ 5, 2],
+///                      [-1, 0]]
+/// let A = Matrix(from: a)
+/// ```
+/// There are also many other convenient initialization methods. Next let's explore slicing:
+/// ```swift
+/// let b = A[.all, 0]  // [[5], [-1]]
+/// let c = A[1, 0...1] + b.T  // [[4, -1]]
+/// ```
+/// Slicing also allows assigning. See this:
+/// ```swift
+/// A[.all, 0].T = c  // [[4, 2], [-1, 0]]
+/// ```
 class Matrix {
     private var data: [Datum]
-    let shape: (rows: Int, cols: Int)
+    
+    /// Shape of the matrix.
+    ///
+    /// - Important: The shape can be changed directly by manipulating this property. Changing the shape essentially restructures the matrix. The order of the data follows `C`-ordering style.
+    ///
+    /// - Precondition: When changing the shape, the dimensions must match the number of element in the matrix.
+    var shape: (rows: Int, cols: Int) {
+        willSet(newShape) {
+            precondition(newShape.rows * newShape.cols == self.data.count, "The shape is incompatible with this matrix.")
+        }
+    }
+    
     private init(dataPtr: [Datum], shape: (rows: Int, cols: Int)) {
         self.data = dataPtr
         self.shape = shape
     }
+    
+    /// Create an instance of this class from an array of arrays of doubles.
+    ///
+    /// - Precondition: The input must represent a matrix (all rows should have equal length).
     convenience init(from values: [[Double]]) {
         precondition(isMatrix(values), "Input argument is not a matrix.")
         let shape = (values.count, values[0].count)
@@ -43,15 +79,21 @@ class Matrix {
         }
         self.init(dataPtr: dataPtr, shape: shape)
     }
+    
+    /// Create an instance of this class by repeating the same value.
     convenience init(repeating value: Double, shape: (rows: Int, cols: Int)) {
         self.init(from: Array(repeating: Array(repeating: value, count: shape.cols), count: shape.rows))
     }
+    
+    /// Create an instance of this class from a diagonal vector, represented as an array of doubles.
     convenience init(diagonal: [Double]) {
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
         for i in 0..<diagonal.count {
             self[i,i] = diagonal[i]
         }
     }
+    
+    /// Create an instance of this class representing an identity matrix of order `n`.
     convenience init(identity n: Int) {
         let diagonal = Array(repeating: 1.0, count: n)
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
@@ -59,6 +101,8 @@ class Matrix {
             self[i,i] = diagonal[i]
         }
     }
+    
+    /// Create a copy of the input matrix.
     convenience init(copy matrix: Matrix) {
         var c: [[Double]] = Array(repeating: Array(repeating: 0, count: matrix.shape.cols), count: matrix.shape.rows)
         for row in 0..<matrix.shape.rows {
@@ -68,6 +112,7 @@ class Matrix {
         }
         self.init(from: c)
     }
+    
     subscript(row: Int, col: Int) -> Double {
         get {
             return self.data[row*self.shape.cols + col].value
@@ -76,6 +121,7 @@ class Matrix {
             self.data[row*self.shape.cols + col].value = newValue
         }
     }
+    
     subscript<C: Sequence<Int>>(row: Int, cols: C) -> Matrix {
         get {
             var subptr = [Datum]()
@@ -95,6 +141,7 @@ class Matrix {
             }
         }
     }
+    
     subscript<R: Sequence<Int>>(rows: R, col: Int) -> Matrix {
         get {
             var subptr = [Datum]()
@@ -114,6 +161,7 @@ class Matrix {
             }
         }
     }
+    
     subscript<R: Sequence<Int>, C: Sequence<Int>>(rows: R, cols: C) -> Matrix {
         get {
             var subptr = [Datum]()
@@ -141,6 +189,7 @@ class Matrix {
             }
         }
     }
+    
     subscript(row: Int, cols: SpecialMatrixIndex) -> Matrix {
         get {
             switch cols {
@@ -340,5 +389,18 @@ extension Matrix {
             }
             return c
         }
+    }
+}
+
+extension Matrix {
+    /// Extract the standard Swift double array representation of this matrix.
+    func toArray() -> [[Double]] {
+        var a: [[Double]] = Array(repeating: Array(repeating: 0, count: self.shape.cols), count: self.shape.rows)
+        for row in 0..<self.shape.rows {
+            for col in 0..<self.shape.cols {
+                a[row][col] = self[row,col]
+            }
+        }
+        return a
     }
 }

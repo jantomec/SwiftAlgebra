@@ -22,13 +22,16 @@ SwiftLinearAlgebra includes only pure Swift code making this package cross-platf
 
 The following code snippets should help you getting the gist of it.
 
-```Swift
+```swift
 a = 4
 ```
 
 ## Contribution
 
 Right now not possible.
+
+## License
+
 [<img src="https://github.com/tomecj/SwiftLinearAlgebra/blob/master/Resources/1280px-MIT_logo.png" alt="drawing" height="20"/>](https://github.com/tomecj/SwiftLinearAlgebra/blob/master/LICENSE)
 
 ## Resources
