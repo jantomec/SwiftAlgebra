@@ -12,7 +12,7 @@ enum LinearAlgebraError: Error {
     case singularMatrix
 }
 
-func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
+private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
     precondition(A.shape.rows == A.shape.cols, "LU decomposition requires a square matrix.")
     let LU = Matrix(copy: A)
     let n = LU.shape.rows
@@ -57,7 +57,7 @@ func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> 
     return (LU, P)
 }
 
-func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
+private func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
     let x = Matrix(copy: b)
     let n = LU.shape.rows
     precondition(n == LU.shape.cols, "LU decomposition requires a square matrix.")
@@ -82,7 +82,7 @@ func solve(A: Matrix, b: Matrix) throws -> Matrix {
     return LUSolve(LU: decomposition.LU, P: decomposition.P, b: b)
 }
 
-func LUInvert(LU: Matrix, P: [Int]) -> Matrix {
+private func LUInvert(LU: Matrix, P: [Int]) -> Matrix {
     let IA = Matrix(copy: LU)
     let n = LU.shape.rows
     precondition(n == LU.shape.cols, "LU decomposition requires a square matrix.")
@@ -104,6 +104,13 @@ func LUInvert(LU: Matrix, P: [Int]) -> Matrix {
     return IA
 }
 
+/// Compute the inverse of a matrix.
+///
+/// - Precondition: Only square matrices can be inverted.
+///
+/// - Parameter A: Matrix to be inverted.
+///
+/// - Returns: A new matrix, inverse of the input.
 func invert(_ A: Matrix) throws -> Matrix {
     let decomposition = try LUDecompositionDoolittle(A)
     return LUInvert(LU: decomposition.LU, P: decomposition.P)

@@ -18,9 +18,18 @@ https://developer.apple.com/documentation/swift_packages/adding_package_dependen
 
 SwiftLinearAlgebra includes only pure Swift code making this package cross-platform. The latest version of Swift 5.3 is recommended.
 
+## Usage
+
+The following code snippets should help you getting the gist of it.
+
+```Swift
+a = 4
+```
+
 ## Contribution
 
 Right now not possible.
+[<img src="https://github.com/tomecj/SwiftLinearAlgebra/blob/master/Resources/1280px-MIT_logo.png" alt="drawing" height="20"/>](https://github.com/tomecj/SwiftLinearAlgebra/blob/master/LICENSE)
 
 ## Resources
 
