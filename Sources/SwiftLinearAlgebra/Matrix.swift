@@ -55,7 +55,7 @@ public class Matrix {
     /// - Important: The shape can be changed directly by manipulating this property. Changing the shape essentially restructures the matrix. The order of the data follows `C`-ordering style.
     ///
     /// - Precondition: When changing the shape, the dimensions must match the number of element in the matrix.
-    var shape: (rows: Int, cols: Int) {
+    public var shape: (rows: Int, cols: Int) {
         willSet(newShape) {
             precondition(newShape.rows * newShape.cols == self.data.count, "The shape is incompatible with this matrix.")
         }
@@ -69,7 +69,7 @@ public class Matrix {
     /// Create an instance of this class from an array of arrays of doubles.
     ///
     /// - Precondition: The input must represent a matrix (all rows should have equal length).
-    convenience init(from values: [[Double]]) {
+    public convenience init(from values: [[Double]]) {
         precondition(isMatrix(values), "Input argument is not a matrix.")
         let shape = (values.count, values[0].count)
         let data = Array(values.joined())
@@ -81,12 +81,12 @@ public class Matrix {
     }
     
     /// Create an instance of this class by repeating the same value.
-    convenience init(repeating value: Double, shape: (rows: Int, cols: Int)) {
+    public convenience init(repeating value: Double, shape: (rows: Int, cols: Int)) {
         self.init(from: Array(repeating: Array(repeating: value, count: shape.cols), count: shape.rows))
     }
     
     /// Create an instance of this class from a diagonal vector, represented as an array of doubles.
-    convenience init(diagonal: [Double]) {
+    public convenience init(diagonal: [Double]) {
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
         for i in 0..<diagonal.count {
             self[i,i] = diagonal[i]
@@ -94,7 +94,7 @@ public class Matrix {
     }
     
     /// Create an instance of this class representing an identity matrix of order `n`.
-    convenience init(identity n: Int) {
+    public convenience init(identity n: Int) {
         let diagonal = Array(repeating: 1.0, count: n)
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
         for i in 0..<diagonal.count {
@@ -103,7 +103,7 @@ public class Matrix {
     }
     
     /// Create a copy of the input matrix.
-    convenience init(copy matrix: Matrix) {
+    public convenience init(copy matrix: Matrix) {
         var c: [[Double]] = Array(repeating: Array(repeating: 0, count: matrix.shape.cols), count: matrix.shape.rows)
         for row in 0..<matrix.shape.rows {
             for col in 0..<matrix.shape.cols {
@@ -113,7 +113,7 @@ public class Matrix {
         self.init(from: c)
     }
     
-    subscript(row: Int, col: Int) -> Double {
+    public subscript(row: Int, col: Int) -> Double {
         get {
             return self.data[row*self.shape.cols + col].value
         }
@@ -122,7 +122,7 @@ public class Matrix {
         }
     }
     
-    subscript<C: Sequence<Int>>(row: Int, cols: C) -> Matrix {
+    public subscript<C: Sequence<Int>>(row: Int, cols: C) -> Matrix {
         get {
             var subptr = [Datum]()
             for col in cols {
@@ -142,7 +142,7 @@ public class Matrix {
         }
     }
     
-    subscript<R: Sequence<Int>>(rows: R, col: Int) -> Matrix {
+    public subscript<R: Sequence<Int>>(rows: R, col: Int) -> Matrix {
         get {
             var subptr = [Datum]()
             for row in rows {
@@ -162,7 +162,7 @@ public class Matrix {
         }
     }
     
-    subscript<R: Sequence<Int>, C: Sequence<Int>>(rows: R, cols: C) -> Matrix {
+    public subscript<R: Sequence<Int>, C: Sequence<Int>>(rows: R, cols: C) -> Matrix {
         get {
             var subptr = [Datum]()
             var subshape = (rows: 0, cols: 0)
@@ -190,7 +190,7 @@ public class Matrix {
         }
     }
     
-    subscript(row: Int, cols: SpecialMatrixIndex) -> Matrix {
+    public subscript(row: Int, cols: SpecialMatrixIndex) -> Matrix {
         get {
             switch cols {
             case .all:
@@ -204,7 +204,8 @@ public class Matrix {
             }
         }
     }
-    subscript<R: Sequence<Int>>(rows: R, cols: SpecialMatrixIndex) -> Matrix {
+    
+    public subscript<R: Sequence<Int>>(rows: R, cols: SpecialMatrixIndex) -> Matrix {
         get {
             switch cols {
             case .all:
@@ -218,7 +219,8 @@ public class Matrix {
             }
         }
     }
-    subscript(rows: SpecialMatrixIndex, col: Int) -> Matrix {
+    
+    public subscript(rows: SpecialMatrixIndex, col: Int) -> Matrix {
         get {
             switch rows {
             case .all:
@@ -232,7 +234,8 @@ public class Matrix {
             }
         }
     }
-    subscript<C: Sequence<Int>>(rows: SpecialMatrixIndex, cols: C) -> Matrix {
+    
+    public subscript<C: Sequence<Int>>(rows: SpecialMatrixIndex, cols: C) -> Matrix {
         get {
             switch rows {
             case .all:
@@ -246,7 +249,8 @@ public class Matrix {
             }
         }
     }
-    subscript(rows: SpecialMatrixIndex, cols: SpecialMatrixIndex) -> Matrix {
+    
+    public subscript(rows: SpecialMatrixIndex, cols: SpecialMatrixIndex) -> Matrix {
         get {
             switch rows {
             case .all:
@@ -293,7 +297,7 @@ extension Matrix: CustomStringConvertible {
 
 infix operator ∙: MultiplicationPrecedence
 extension Matrix {
-    static func +(a: Matrix, b: Matrix) -> Matrix {
+    public static func +(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape == b.shape, "The shape of both matrices should be the same.")
         let c = Matrix(repeating: 0, shape: a.shape)
         for row in 0..<c.shape.rows {
@@ -303,7 +307,8 @@ extension Matrix {
         }
         return c
     }
-    static func +=(a: inout Matrix, b: Matrix) {
+    
+    public static func +=(a: inout Matrix, b: Matrix) {
         precondition(a.shape == b.shape, "The shape of both matrices should be the same.")
         for row in 0..<a.shape.rows {
             for col in 0..<a.shape.cols {
@@ -311,7 +316,8 @@ extension Matrix {
             }
         }
     }
-    static func -(a: Matrix, b: Matrix) -> Matrix {
+    
+    public static func -(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape == b.shape, "The shape of both matrices should be the same.")
         let c = Matrix(repeating: 0, shape: a.shape)
         for row in 0..<c.shape.rows {
@@ -321,7 +327,8 @@ extension Matrix {
         }
         return c
     }
-    static func -=(a: inout Matrix, b: Matrix) {
+    
+    public static func -=(a: inout Matrix, b: Matrix) {
         precondition(a.shape == b.shape, "The shape of both matrices should be the same.")
         for row in 0..<a.shape.rows {
             for col in 0..<a.shape.cols {
@@ -329,7 +336,8 @@ extension Matrix {
             }
         }
     }
-    static func *(a: Double, b: Matrix) -> Matrix {
+    
+    public static func *(a: Double, b: Matrix) -> Matrix {
         let c = Matrix(copy: b)
         for row in 0..<c.shape.rows {
             for col in 0..<c.shape.cols {
@@ -338,7 +346,8 @@ extension Matrix {
         }
         return c
     }
-    static func *(b: Matrix, a: Double) -> Matrix {
+    
+    public static func *(b: Matrix, a: Double) -> Matrix {
         let c = Matrix(copy: b)
         for row in 0..<c.shape.rows {
             for col in 0..<c.shape.cols {
@@ -347,14 +356,16 @@ extension Matrix {
         }
         return c
     }
-    static func *=(a: inout Matrix, b: Double) {
+    
+    public static func *=(a: inout Matrix, b: Double) {
         for row in 0..<a.shape.rows {
             for col in 0..<a.shape.cols {
                 a[row,col] *= b
             }
         }
     }
-    static func ∙(a: Matrix, b: Matrix) -> Matrix {
+    
+    public static func ∙(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape.cols == b.shape.rows, "The number of columns in the first matrix should equal the number of rows in the second.")
         let c = Matrix(repeating: 0, shape: (a.shape.rows, b.shape.cols))
         for i in 0..<a.shape.rows {
@@ -366,7 +377,8 @@ extension Matrix {
         }
         return c
     }
-    static func ==(a: Matrix, b: Matrix) -> Bool {
+    
+    public static func ==(a: Matrix, b: Matrix) -> Bool {
         precondition(a.shape == b.shape, "The matrices must have the same shape.")
         let tolerance = 1e-12
         for row in 0..<a.shape.rows {
@@ -379,7 +391,7 @@ extension Matrix {
 }
 
 extension Matrix {
-    var T: Matrix {
+    public var T: Matrix {
         get {
             let c = Matrix(repeating: 0, shape: (rows: self.shape.cols, cols: self.shape.rows))
             for row in 0..<self.shape.rows {
@@ -394,7 +406,7 @@ extension Matrix {
 
 extension Matrix {
     /// Extract the standard Swift double array representation of this matrix.
-    func toArray() -> [[Double]] {
+    public func toArray() -> [[Double]] {
         var a: [[Double]] = Array(repeating: Array(repeating: 0, count: self.shape.cols), count: self.shape.rows)
         for row in 0..<self.shape.rows {
             for col in 0..<self.shape.cols {
