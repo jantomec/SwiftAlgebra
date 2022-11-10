@@ -24,7 +24,7 @@ The following code snippets should help you getting the gist of it.
 
 Construct an identity matrix
 ```swift
-var I = 
+var I = Matrix(identity: 4)
 ```
 or a general matrix from a double array
 ```swift
