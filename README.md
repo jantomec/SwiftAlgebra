@@ -5,7 +5,10 @@ A small standalone package for linear algebra.
 ## Features
 
 Currenlty supported features:
-- Matrix
+- Vectors are treated as one-dimensional matrices
+- Advanced slicing
+- Arithmetic operations on matrices
+- Linear algebra (inverse and solve using LU decomposition)
 
 ## Installation
 
@@ -13,7 +16,7 @@ https://developer.apple.com/documentation/swift_packages/adding_package_dependen
 
 ## Requirements
 
-Swift 5.3
+SwiftLinearAlgebra includes only pure Swift code making this package cross-platform. The latest version of Swift 5.3 is recommended.
 
 ## Contribution
 
