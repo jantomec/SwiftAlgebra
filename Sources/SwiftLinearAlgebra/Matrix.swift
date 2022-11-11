@@ -415,11 +415,17 @@ extension Matrix {
     
     public static func **(a: Matrix, p: Int) -> Matrix {
         precondition(a.shape.rows == a.shape.cols, "Only square matrices can be raised to power.")
-        var b = Matrix(identity: a.shape.cols)
-        for i in 0..<p {
-            b = b∙a
+        let c: Matrix
+        if p < 0 {
+            c = try! invert(a)
+        } else {
+            c = Matrix(copy: a)
         }
-        return b
+        var e = Matrix(identity: a.shape.cols)
+        for _ in 0..<abs(p) {
+            e = e∙c
+        }
+        return e
     }
 }
 

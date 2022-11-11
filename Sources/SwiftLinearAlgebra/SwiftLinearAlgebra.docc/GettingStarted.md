@@ -80,3 +80,17 @@ A[.all, 2].T = A[0, [0, 2]]
 print(A)
 // Prints "[[2.5, 2.5, 2.5], [0, 0, 3]]"
 ```
+
+### Matrix power
+
+Square matrices can be raised to power.
+```swift
+print(A[.all,1...2]**2)
+// Prints "[[6.25, 10.5], [0, 1]]"
+```
+Negative powers produce inverse of `A`.
+```swift
+print(A[.all,1...2]**(-1))
+// Prints "[[0.4, -1.2], [0, 1]]"
+```
+
