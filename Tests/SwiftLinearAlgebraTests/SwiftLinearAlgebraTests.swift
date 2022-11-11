@@ -48,6 +48,7 @@ final class LinearAlgebraTests: XCTestCase {
                               [ 40.5,  -7.9,  -4.9]])
         a[0..<3,0..<3] += b[0..<3,0..<3]
         XCTAssert(2*a[0..<3,0..<3].T + b.T[0..<3,0..<3] == c)
+        XCTAssert(-1*a == -a)
     }
     
     func testMatrixMultiplication() throws {
