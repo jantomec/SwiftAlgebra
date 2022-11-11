@@ -313,7 +313,13 @@ extension Matrix: CustomStringConvertible {
     }
 }
 
+precedencegroup ExponentiativePrecedence {
+    associativity: right
+    higherThan: MultiplicationPrecedence
+}
+infix operator **: ExponentiativePrecedence
 infix operator ∙: MultiplicationPrecedence
+
 extension Matrix {
     public static func +(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape == b.shape, "The shape of both matrices should be the same.")
@@ -405,6 +411,15 @@ extension Matrix {
             }
         }
         return true
+    }
+    
+    public static func **(a: Matrix, p: Int) -> Matrix {
+        precondition(a.shape.rows == a.shape.cols, "Only square matrices can be raised to power.")
+        var b = Matrix(identity: a.shape.cols)
+        for i in 0..<p {
+            b = b∙a
+        }
+        return b
     }
 }
 

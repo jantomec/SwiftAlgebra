@@ -32,3 +32,10 @@ print(B)
 print(B∙A)
 // Prints "[[24.5, 10], [2.5, 1]]"
 ```
+
+### Matrix power
+
+```swift
+print(B**3)
+// Prints "[[127.5, 12.625], [12.625, 1.25]]"
+```

@@ -61,6 +61,14 @@ final class LinearAlgebraTests: XCTestCase {
         XCTAssert(b∙a == c)
     }
     
+    func testMatrixPower() throws {
+        let a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9]])
+        let b = Matrix(from: [[651.7790000000001, -421.98300000000006, -101.277],
+                              [-770.8220000000001, 1145.1380000000001, -340.346],
+                              [-365.18200000000013, 61.33800000000008, 1335.1180000000002]])
+        XCTAssert(a**3 == b)
+    }
+    
     func testInverting() throws {
         let a = Matrix(from: [[-57.49, 63.53, -91.04],
                               [-74.85, 42.29, -64.59],
