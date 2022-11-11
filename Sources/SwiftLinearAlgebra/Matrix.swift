@@ -389,6 +389,16 @@ extension Matrix {
         }
     }
     
+    public static func /(b: Matrix, a: Double) -> Matrix {
+        let c = Matrix(copy: b)
+        for row in 0..<c.shape.rows {
+            for col in 0..<c.shape.cols {
+                c[row,col] /= a
+            }
+        }
+        return c
+    }
+    
     public static func ∙(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape.cols == b.shape.rows, "The number of columns in the first matrix should equal the number of rows in the second.")
         let c = Matrix(repeating: 0, shape: (a.shape.rows, b.shape.cols))
