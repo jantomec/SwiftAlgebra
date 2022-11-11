@@ -14,6 +14,7 @@ private class Datum {
     }
 }
 
+/// Special index which can be used to access all elements of a Matrix in a particular direction.
 public enum SpecialMatrixIndex {
     case all
 }
@@ -29,24 +30,6 @@ private func isMatrix(_ A: [[Double]]) -> Bool {
 /// Basic class for representing matrices.
 ///
 /// This class provides an intuitive abstract representation of a mathematical object called matrix. It references the data through pointers permitting advanced manipulation through slicing.
-///
-/// **Getting started with Matrices:**
-///
-/// Create a new matrix from existing double array:
-/// ```swift
-/// let a: [[Double]] = [[ 5, 2],
-///                      [-1, 0]]
-/// let A = Matrix(from: a)
-/// ```
-/// There are also many other convenient initialization methods. Next let's explore slicing:
-/// ```swift
-/// let b = A[.all, 0]  // [[5], [-1]]
-/// let c = A[1, 0...1] + b.T  // [[4, -1]]
-/// ```
-/// Slicing also allows assigning. See this:
-/// ```swift
-/// A[.all, 0].T = c  // [[4, 2], [-1, 0]]
-/// ```
 public class Matrix {
     private var data: [Datum]
     
@@ -68,7 +51,13 @@ public class Matrix {
     
     /// Create an instance of this class from an array of arrays of doubles.
     ///
+    /// Example:
+    /// ```swift
+    /// let A = Matrix(from: [[5, 2], [-1, 0]])
+    /// ```
+    ///
     /// - Precondition: The input must represent a matrix (all rows should have equal length).
+    /// - Parameter values: Double array of data.
     public convenience init(from values: [[Double]]) {
         precondition(isMatrix(values), "Input argument is not a matrix.")
         let shape = (values.count, values[0].count)
@@ -81,11 +70,25 @@ public class Matrix {
     }
     
     /// Create an instance of this class by repeating the same value.
+    ///
+    /// Example:
+    /// ```swift
+    /// let A = Matrix(repeating: 0, shape: (3,3))
+    /// ```
+    /// - Parameters:
+    ///   - value: Value to be repeated.
+    ///   - shape: Desired shape of the matrix.
     public convenience init(repeating value: Double, shape: (rows: Int, cols: Int)) {
         self.init(from: Array(repeating: Array(repeating: value, count: shape.cols), count: shape.rows))
     }
     
     /// Create an instance of this class from a diagonal vector, represented as an array of doubles.
+    ///
+    /// Example:
+    /// ```swift
+    /// let A = Matrix(diagonal: [5, 2, -1, 0])
+    /// ```
+    /// - Parameter diagonal: Array of diagonal elements.
     public convenience init(diagonal: [Double]) {
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
         for i in 0..<diagonal.count {
@@ -94,6 +97,13 @@ public class Matrix {
     }
     
     /// Create an instance of this class representing an identity matrix of order `n`.
+    ///
+    /// Example:
+    /// ```swift
+    /// let A = Matrix(identity: 3)
+    /// ```
+    ///
+    /// - Parameter n: Dimension of the matrix.
     public convenience init(identity n: Int) {
         let diagonal = Array(repeating: 1.0, count: n)
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
@@ -103,6 +113,14 @@ public class Matrix {
     }
     
     /// Create a copy of the input matrix.
+    ///
+    /// Example:
+    /// ```swift
+    /// let A = Matrix(from: [[5, 2], [-1, 0]])
+    /// let B = Matrix(copy: A)
+    /// ```
+    ///
+    /// - Parameter matrix: A Matrix to be copied.
     public convenience init(copy matrix: Matrix) {
         var c: [[Double]] = Array(repeating: Array(repeating: 0, count: matrix.shape.cols), count: matrix.shape.rows)
         for row in 0..<matrix.shape.rows {
@@ -391,6 +409,7 @@ extension Matrix {
 }
 
 extension Matrix {
+    /// Transpose of a matrix
     public var T: Matrix {
         get {
             let c = Matrix(repeating: 0, shape: (rows: self.shape.cols, cols: self.shape.rows))
@@ -400,6 +419,14 @@ extension Matrix {
                 }
             }
             return c
+        }
+        set(newValue) {
+            precondition(self.shape.cols == newValue.shape.rows && self.shape.rows == newValue.shape.cols)
+            for row in 0..<newValue.shape.rows {
+                for col in 0..<newValue.shape.cols {
+                    self[col,row] = newValue[row,col]
+                }
+            }
         }
     }
 }
