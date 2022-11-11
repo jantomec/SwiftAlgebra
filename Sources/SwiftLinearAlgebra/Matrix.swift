@@ -403,7 +403,7 @@ extension Matrix {
     }
     
     public static func ==(a: Matrix, b: Matrix) -> Bool {
-        precondition(a.shape == b.shape, "The matrices must have the same shape.")
+        if a.shape != b.shape { return false }
         let tolerance = 1e-12
         for row in 0..<a.shape.rows {
             for col in 0..<a.shape.cols {
