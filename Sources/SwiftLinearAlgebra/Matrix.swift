@@ -427,6 +427,10 @@ extension Matrix {
         }
         return e
     }
+    
+    public static prefix func - (a: Matrix) -> Matrix {
+        return -1 * a
+    }
 }
 
 extension Matrix {
