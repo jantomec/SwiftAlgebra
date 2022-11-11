@@ -93,4 +93,4 @@ Negative powers produce inverse of `A`.
 print(A[.all,1...2]**(-1))
 // Prints "[[0.4, -1.2], [0, 1]]"
 ```
-
+The difference between ``Matrix/**(a:p:)`` and ``invert(_:)`` is that the latter throws an error if matrix `A` is singular while the former will force unwrap and cause runtime error. For this reason, power syntax is applicable to matrices where we are certain that the inverse exists.
