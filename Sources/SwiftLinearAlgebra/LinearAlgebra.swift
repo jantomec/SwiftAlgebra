@@ -12,6 +12,23 @@ public enum LinearAlgebraError: Error {
     case singularMatrix
 }
 
+/// Compute trace of matrix.
+///
+/// - Precondition: "Trace is defined only on square matrices."
+///
+/// - Parameters:
+///   - A: Matrix
+///
+/// - Returns: Trace of matrix.
+public func trace(A: Matrix) -> Double {
+    precondition(A.shape.rows == A.shape.cols, "Trace is defined only on square matrices.")
+    var tr: Double = 0
+    for row in 0..<A.shape.rows {
+        tr += A[row,row]
+    }
+    return tr
+}
+
 private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
     precondition(A.shape.rows == A.shape.cols, "LU decomposition requires a square matrix.")
     let LU = Matrix(copy: A)
