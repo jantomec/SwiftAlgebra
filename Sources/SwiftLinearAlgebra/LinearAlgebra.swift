@@ -20,7 +20,7 @@ public enum LinearAlgebraError: Error {
 ///   - A: Matrix
 ///
 /// - Returns: Trace of matrix.
-public func trace(A: Matrix) -> Double {
+public func trace(_ A: Matrix) -> Double {
     precondition(A.shape.rows == A.shape.cols, "Trace is defined only on square matrices.")
     var tr: Double = 0
     for row in 0..<A.shape.rows {
