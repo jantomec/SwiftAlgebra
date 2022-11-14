@@ -18,7 +18,7 @@ Swift Linear Algebra package provides a simple, yet powerful way of handling bas
 
 ### Linear Algebra
 
-- ``trace(A:)``
+- ``trace(_:)``
 
 - ``solve(A:b:)``
 
