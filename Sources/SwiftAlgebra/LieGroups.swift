@@ -1,6 +1,6 @@
 //
 //  LieGroups.swift
-//  Fiber
+//  SwiftAlgebra
 //
 //  Created by Jan Tomec on 10/11/2022.
 //
@@ -185,7 +185,7 @@ private func antihatse3(_ x: Matrix) -> Matrix {
 /// - Parameter x: Column matrix, element of linear space.
 ///
 /// - Returns: A new matrix, member of Lie algebra.
-func hat(_ x: Matrix) -> Matrix {
+public func hat(_ x: Matrix) -> Matrix {
     switch x.shape {
     case (3,1): return hatso3(x)
     case (6,1): return hatse3(x)
@@ -204,7 +204,7 @@ func hat(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix, element of Lie algebra.
 ///
 /// - Returns: A new matrix, member of linear space.
-func antihat(_ x: Matrix) -> Matrix {
+public func antihat(_ x: Matrix) -> Matrix {
     switch vectorSpace(of: x) {
     case .so3: return antihatso3(x)
     case .se3: return antihatse3(x)
@@ -227,7 +227,7 @@ func antihat(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix, element of Lie algebra or Lie group.
 ///
 /// - Returns: A new matrix, member of adjoint of Lie algebra.
-func adjoint(_ x: Matrix) -> Matrix {
+public func adjoint(_ x: Matrix) -> Matrix {
     switch vectorSpace(of: x) {
     case .so3:
         return Matrix(copy: x)
@@ -250,7 +250,7 @@ func adjoint(_ x: Matrix) -> Matrix {
     }
 }
 
-/// Maps a matrix from adjoint of Lie algebra to  Lie algebra.
+/// Maps a matrix from adjoint of Lie algebra or adjoint of Lie group to  Lie algebra or Lie group.
 ///
 /// This function does the reverse of the ``adjoint(_:)``.
 ///
@@ -261,12 +261,12 @@ func adjoint(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix, element of adjoint of Lie algebra or Lie group.
 ///
 /// - Returns: A new matrix, member of Lie algebra or Lie group.
-func antiadjoint(_ x: Matrix) -> Matrix {
+public func antiadjoint(_ x: Matrix) -> Matrix {
     switch vectorSpace(of: x) {
     case .so3:
         return Matrix(copy: x)
     case .adse3:
-        let a = Matrix(repeating: 0, shape: x.shape)
+        let a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
         a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
         a[0...2,3] = antihat(x[0...2,3...5])
         return a
@@ -293,7 +293,7 @@ func antiadjoint(_ x: Matrix) -> Matrix {
 /// - Parameter x: Column matrix, element of linear space.
 ///
 /// - Returns: A new matrix, member of the adjoint of Lie algebra.
-func tilde(_ x: Matrix) -> Matrix {
+public func tilde(_ x: Matrix) -> Matrix {
     return adjoint(hat(x))
 }
 
@@ -308,18 +308,8 @@ func tilde(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix, element of adjoint of Lie algebra.
 ///
 /// - Returns: A new matrix, member of linear space.
-func antitilde(_ x: Matrix) -> Matrix {
-    switch vectorSpace(of: x) {
-    case .so3:
-        return antihatso3(x)
-    case .adse3:
-        let a = Matrix(repeating: 0, shape: (rows: 6, cols: 1))
-        a[0...2,0] = antihatso3(x[0...2,3...5])
-        a[3...5,0] = antihatso3(x[0...2,0...2])
-        return a
-    default:
-        fatalError("This function is defined only on adjoint of so(3) and adjoint of se(3) Lie algebras.")
-    }
+public func antitilde(_ x: Matrix) -> Matrix {
+    return antihat(antiadjoint(x))
 }
 
 /// Maps a matrix from Lie algebra to its coadjoint representation.
@@ -335,7 +325,7 @@ func antitilde(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix, element of Lie algebra.
 ///
 /// - Returns: A new matrix, member of coadjoint of Lie algebra.
-func coadjoint(_ x: Matrix) -> Matrix {
+public func coadjoint(_ x: Matrix) -> Matrix {
     switch vectorSpace(of: x) {
     case .so3:
         return Matrix(copy: x)
@@ -350,6 +340,31 @@ func coadjoint(_ x: Matrix) -> Matrix {
     }
 }
 
+/// Maps a matrix from coadjoint of Lie algebra to  Lie algebra.
+///
+/// This function does the reverse of the ``coadjoint(_:)``.
+///
+/// - Precondition: Matrix `x` must be a member of coadjoint of either so(3) or se(3) Lie algebra.
+///
+/// - Remark: A new matrix is created by copying existing data. Changes in values of the original object **do not** affect the created matrix.
+///
+/// - Parameter x: Matrix, element of coadjoint of Lie algebra.
+///
+/// - Returns: A new matrix, member of Lie algebra.
+public func anticoadjoint(_ x: Matrix) -> Matrix {
+    switch vectorSpace(of: x) {
+    case .so3:
+        return Matrix(copy: x)
+    case .coadse3:
+        let a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
+        a[0...2,0...2] = Matrix(copy: x[3...5,3...5])
+        a[0...2,3] = antihat(x[0...2,3...5])
+        return a
+    default:
+        fatalError("Matrix `x` must be a member of adjoint of either so(3) or se(3) Lie algebra or SO(3) or SE(3) Lie group.")
+    }
+}
+
 /// Maps a vector from linear space to coadjoint representation of Lie algebra.
 ///
 /// This function is specifically applicable to three- and six-dimensional linear spaces. It is a convenience function which acts as a convolution of ``hat(_:)`` and ``coadjoint(_:)``.
@@ -361,8 +376,23 @@ func coadjoint(_ x: Matrix) -> Matrix {
 /// - Parameter x: Column matrix, element of linear space.
 ///
 /// - Returns: A new matrix, member of the coadjoint of the Lie algebra.
-func check(_ x: Matrix) -> Matrix {
+public func check(_ x: Matrix) -> Matrix {
     return coadjoint(hat(x))
+}
+
+/// Maps a matrix from coadjoint of Lie algebra to  linear space.
+///
+/// This function does the reverse of the ``check(_:)``.
+///
+/// - Precondition: Matrix `x` must be a member of either coadjoint of so(3) or se(3) Lie algebra.
+///
+/// - Remark: A new matrix is created by copying existing data. Changes in values of the original object **do not** affect the created matrix.
+///
+/// - Parameter x: Matrix, element of coadjoint of Lie algebra.
+///
+/// - Returns: A new matrix, member of linear space.
+public func anticheck(_ x: Matrix) -> Matrix {
+    antihat(anticoadjoint(x))
 }
 
 private func factorial(_ N: Int) -> Double {
@@ -559,7 +589,7 @@ private func logSE3(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix.
 ///
 /// - Returns: Matrix exponential.
-func exp(_ x: Matrix) -> Matrix {
+public func exp(_ x: Matrix) -> Matrix {
     switch vectorSpace(of: x) {
     case .so3:
         return expso3(x)
@@ -609,7 +639,7 @@ func exp(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix.
 ///
 /// - Returns: Tangent application.
-func tang(_ x: Matrix) -> Matrix {
+public func tang(_ x: Matrix) -> Matrix {
     switch vectorSpace(of: x) {
     case .so3:
         return tangso3(x)
@@ -650,7 +680,7 @@ func tang(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix.
 ///
 /// - Returns: Matrix logartihm.
-func log(_ x: Matrix) -> Matrix {
+public func log(_ x: Matrix) -> Matrix {
     switch vectorSpace(of: x) {
     case .SO3:
         return logSO3(x)
@@ -666,5 +696,5 @@ func log(_ x: Matrix) -> Matrix {
         }
     default:
         fatalError("Exponential function is defined only on square matrices.")
-}
+    }
 }

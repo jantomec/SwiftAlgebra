@@ -8,7 +8,9 @@ Lie group functionality is essential for solving beam problems with geomtrically
 
 ## Topics
 
-### Functions
+### Linear space and Lie algebra
+
+- ``hat(_:)``
 
 - ``antihat(_:)``
 
@@ -22,7 +24,13 @@ Lie group functionality is essential for solving beam problems with geomtrically
 
 - ``coadjoint(_:)``
 
+- ``anticoadjoint(_:)``
+
 - ``check(_:)``
+
+- ``anticheck(_:)``
+
+### Lie group and Lie algebra
 
 - ``exp(_:)``
 

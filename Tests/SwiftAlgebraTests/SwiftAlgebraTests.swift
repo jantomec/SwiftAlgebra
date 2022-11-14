@@ -223,4 +223,15 @@ final class LieGroupsTests: XCTestCase {
         XCTAssert(trace(d ∙ d.T) < 1e-10)
     }
     
+    func testAdjoint() throws {
+        let a = Matrix(from: [[0.32, 0.78, -0.8, -0.92, -0.13, 0.28]]).T
+        let b = Matrix(from: [[-0.09, 0.83, -0.1, 0.73, -0.82, -1.00]]).T
+        XCTAssert(hat(tilde(a) ∙ b) ≈ hat(a) ∙ hat(b) - hat(b) ∙ hat(a))
+        XCTAssert(tilde(a).T ∙ b ≈ check(b) ∙ a)
+        let A = exp(a)
+        XCTAssert(hat(adjoint(A) ∙ b) ≈ A ∙ hat(b) ∙ A**(-1))
+        XCTAssert(antitilde(tilde(a)) ≈ a)
+        XCTAssert(anticheck(check(a)) ≈ a)
+    }
+    
 }
