@@ -60,7 +60,7 @@ Contact me personally.
 
 ## License
 
-[<img src="https://github.com/tomecj/SwiftLinearAlgebra/blob/master/Resources/1280px-MIT_logo.png" alt="drawing" height="20"/>](https://github.com/tomecj/SwiftLinearAlgebra/blob/master/LICENSE)
+[<img src="https://github.com/tomecj/SwiftAlgebra/blob/master/Resources/1280px-MIT_logo.png" alt="drawing" height="20"/>](https://github.com/tomecj/SwiftAlgebra/blob/master/LICENSE)
 
 ## Resources
 
