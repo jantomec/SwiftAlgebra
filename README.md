@@ -54,6 +54,10 @@ print(I)
 ```
 Note that we marked matrix `C` as `var` while `I` and `B` were also manipulated under `let`. This is because in the last example we replaced the reference of the `Matrix` instance, not individual values. Individual values can be changed through the subscript `[.all, .all]`.
 
+## Extra Tips & Tricks
+
+I know, symbols '∙' and '≈' are a bit tedious to type, but! Many editors including _Xcode_ allow snippets which can make the coding very simple while the beautiful syntax remains. [Here](https://sarunw.com/posts/how-to-create-code-snippets-in-xcode/) is a link on how to do it in Xcode.
+
 ## Contribution
 
 Contact me personally.

@@ -30,7 +30,7 @@ extension Double {
 /// - Parameter x: Any matrix
 /// - Returns: True or false
 private func isSkewsymmetric(_ x: Matrix) -> Bool {
-    return x == -x.T
+    return x ≈ -x.T
 }
 
 /// Check whether a matrix is orthogonal
@@ -38,7 +38,7 @@ private func isSkewsymmetric(_ x: Matrix) -> Bool {
 /// - Returns: True or false
 private func isOrthogonal(_ x: Matrix) -> Bool {
     if x.shape.rows == x.shape.cols {
-        return x∙x.T == Matrix(identity: x.shape.cols)
+        return x∙x.T ≈ Matrix(identity: x.shape.cols)
     } else {
         return false
     }
@@ -56,7 +56,7 @@ private func isInso3(_ x: Matrix) -> Bool {
 /// - Returns: True or false
 private func isInse3(_ x: Matrix) -> Bool {
     if x.shape == (4,4) {
-        return isSkewsymmetric(x[0...2,0...2]) && x[3, .all] == Matrix(repeating: 0, shape: (rows: 1, cols: 4))
+        return isSkewsymmetric(x[0...2,0...2]) && x[3, .all] ≈ Matrix(repeating: 0, shape: (rows: 1, cols: 4))
     } else {
         return false
     }
@@ -67,7 +67,7 @@ private func isInse3(_ x: Matrix) -> Bool {
 /// - Returns: True or false
 private func isInadse3(_ x: Matrix) -> Bool {
     if x.shape == (6,6) {
-        return isSkewsymmetric(x[0...2,0...2]) && isSkewsymmetric(x[0...2,3...5]) && x[0...2,0...2] == x[3...5,3...5] && x[3...5, 0...2] == Matrix(repeating: 0, shape: (rows: 3, cols: 3))
+        return isSkewsymmetric(x[0...2,0...2]) && isSkewsymmetric(x[0...2,3...5]) && x[0...2,0...2] ≈ x[3...5,3...5] && x[3...5, 0...2] ≈ Matrix(repeating: 0, shape: (rows: 3, cols: 3))
     } else {
         return false
     }
@@ -78,7 +78,7 @@ private func isInadse3(_ x: Matrix) -> Bool {
 /// - Returns: True or false
 private func isIncoadse3(_ x: Matrix) -> Bool {
     if x.shape == (6,6) {
-        return isSkewsymmetric(x[3...5, 0...2]) && x[3...5, 0...2] == x[0...2,3...5] && isSkewsymmetric(x[3...5,3...5]) && x[0...2,0...2] == Matrix(repeating: 0, shape: (rows: 3, cols: 3))
+        return isSkewsymmetric(x[3...5, 0...2]) && x[3...5, 0...2] ≈ x[0...2,3...5] && isSkewsymmetric(x[3...5,3...5]) && x[0...2,0...2] ≈ Matrix(repeating: 0, shape: (rows: 3, cols: 3))
     } else {
         return false
     }
@@ -96,7 +96,7 @@ private func isInSO3(_ x: Matrix) -> Bool {
 /// - Returns: True or false
 private func isInSE3(_ x: Matrix) -> Bool {
     if x.shape == (4,4) {
-        return isOrthogonal(x[0...2,0...2]) && x[3, .all] == Matrix(from: [[0, 0, 0, 1]])
+        return isOrthogonal(x[0...2,0...2]) && x[3, .all] ≈ Matrix(from: [[0, 0, 0, 1]])
     } else {
         return false
     }
@@ -107,7 +107,7 @@ private func isInSE3(_ x: Matrix) -> Bool {
 /// - Returns: True or false
 private func isInAdSE3(_ x: Matrix) -> Bool {
     if x.shape == (6,6) {
-        return isOrthogonal(x[0...2,0...2]) && x[0...2,0...2] == x[3...5,3...5] && x[3...5,0...2] == Matrix(repeating: 0, shape: (rows: 3, cols: 3))
+        return isOrthogonal(x[0...2,0...2]) && x[0...2,0...2] ≈ x[3...5,3...5] && x[3...5,0...2] ≈ Matrix(repeating: 0, shape: (rows: 3, cols: 3))
     } else {
         return false
     }
@@ -457,19 +457,19 @@ private func spurrier_quaternion_extraction(_ x: Matrix) -> Matrix {
     switch m {
     case tr:
         q[0,0] = sqrt(1.0 + tr) / 2
-        for i in 0..<3 {
-            let j = (i+1) % 3, k = (i+2) % 3  // cyclic permutations
-            q[i,0] = (x[k,j] - x[j,k]) / (4 * q[0,0])
+        for i in 1...3 {
+            let j = i % 3 + 1, k = (i+1) % 3 + 1  // cyclic permutations
+            q[i,0] = (x[k-1,j-1] - x[j-1,k-1]) / (4 * q[0,0])
         }
     default:
         let i = [x[0,0], x[1,1], x[2,2]].enumerated().max(by: { (a, b) in
             a.element < b.element
-        })!.offset
-        let j = (i+1) % 3, k = (i+2) % 3  // cyclic permutations
-        q[i,0] = sqrt(x[i,i] / 2 + (1 - tr) / 4)
-        q[0,0] = (x[k,j] - x[j,k]) / (4*q[i,0])
+        })!.offset + 1
+        let j = i % 3 + 1, k = (i+1) % 3 + 1  // cyclic permutations
+        q[i,0] = sqrt(x[i-1,i-1] / 2 + (1 - tr) / 4)
+        q[0,0] = (x[k-1,j-1] - x[j-1,k-1]) / (4*q[i,0])
         for l in [j, k] {
-            q[l,0] = (x[l,i] - x[i,l]) / (4*q[i,0])
+            q[l,0] = (x[l-1,i-1] + x[i-1,l-1]) / (4*q[i,0])
         }
     }
     return q
@@ -477,13 +477,20 @@ private func spurrier_quaternion_extraction(_ x: Matrix) -> Matrix {
 
 /// Matrix logarithm SO(3)
 /// - Parameter x: SO(3)
-/// - Returns: so(3)
+/// - Returns: so(3) with angle of rotation normalized between -π and π
 private func logSO3(_ x: Matrix) -> Matrix {
     let q = spurrier_quaternion_extraction(x)
-    var n = sqrt((q[1...3,0].T ∙ q[1...3,0])[0,0])
-    if n == 0.0 { n = 1 }
-    let angle = 2 * atan2(n, q[0,0])
-    return angle / n * q[1...3,0]
+    let n = sqrt((q[1...3,0].T ∙ q[1...3,0])[0,0])
+    if n == 0 { return hat(q[1...3,0]) }
+    var angle = 2 * atan2(n, q[0,0])
+    // normalize angle to be within (-π, π)
+    angle = angle.truncatingRemainder(dividingBy: 2*Double.pi)
+    if angle > Double.pi {
+        angle -= 2 * Double.pi
+    } else if angle < -Double.pi {
+        angle += 2 * Double.pi
+    }
+    return angle * hat(q[1...3,0]) / n
 }
 
 /// Matrix exponential se(3)
@@ -501,12 +508,22 @@ private func expse3(_ x: Matrix) -> Matrix {
 /// - Returns: R^6x6
 private func tangse3(_ x: Matrix) -> Matrix {
     let tolerance = 1e-3
-    let n = sqrt(-0.25*trace(x**2))
-    if n < tolerance { return tangseries(x) }
+    let b = sqrt(-0.25*trace(x**2))
+    if b < tolerance { return tangseries(x) }
     let e = Matrix(identity: 6)
     e[0...2,0...2] = tangso3(x[0...2,0...2])
     e[3...5,3...5] = tangso3(x[3...5,3...5])
-    e[0...2,3...5] = tangso3(x[0...2,0...2]).T ∙ x[0...2,3]
+    let c = -1/2 * trace(x[0...2,0...2] ∙ x[0...2,3...5])
+    let a1 = (cos(b) - 1) / b**2
+    let a2 = (b - sin(b)) / b**3
+    let a3 = c * (2 - 2 * cos(b) - b * sin(b)) / b**4
+    let a4 = -c * (2 + cos(b) - 3 * sin(b) / b) / b**4
+    e[0...2,3...5] = (
+        a1 * x[0...2,3...5]
+        + a2 * (x[0...2,0...2] ∙ x[0...2,3...5] + x[0...2,3...5] ∙ x[0...2,0...2])
+        + a3 * x[0...2,0...2]
+        + a4 * x[0...2,0...2]**2
+    )
     return e
 }
 
@@ -640,7 +657,7 @@ func log(_ x: Matrix) -> Matrix {
     case .SE3:
         return logSE3(x)
     case .AdSE3:
-        return x
+        return adjoint(logSE3(antiadjoint(x)))
     case .linear:
         if x.shape.rows == x.shape.cols {
             return logseries(x)
