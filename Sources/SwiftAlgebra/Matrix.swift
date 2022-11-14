@@ -1,6 +1,6 @@
 //
 //  Matrix.swift
-//  SwiftLinearAlgebra
+//  SwiftAlgebra
 //
 //  Created by Jan Tomec on 09/11/2022.
 //

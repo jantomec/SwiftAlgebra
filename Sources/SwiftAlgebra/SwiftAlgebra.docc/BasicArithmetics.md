@@ -1,6 +1,6 @@
 # Basic Arithmetics
 
-Basic arithmetic operations with Swift Linear Algebra.
+Basic arithmetic operations with Swift Algebra.
 
 ## Overview
 

@@ -1,12 +1,12 @@
 //
-//  LinearAlgebraTests.swift
-//  LinearAlgebraTests
+//  SwiftAlgebraTests.swift
+//  SwiftAlgebraTests
 //
 //  Created by Jan Tomec on 10/11/2022.
 //
 
 import XCTest
-@testable import SwiftLinearAlgebra
+@testable import SwiftAlgebra
 
 final class LinearAlgebraTests: XCTestCase {
 

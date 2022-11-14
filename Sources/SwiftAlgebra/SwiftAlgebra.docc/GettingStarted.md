@@ -4,7 +4,7 @@ See how to construct matrices and access the data.
 
 ## Overview
 
-``Matrix`` is a basic element of Swift Linear Algebra. It represents mathematical matrices and vectors. Matrix itself is a reference type variable meaning that it is referred to by its place in the memory. Furthermore, data that a Matrix is holding is made abstract which allows very intuitive access to any submatrix where no references are lost. 
+``Matrix`` is a basic element of Swift Algebra. It represents mathematical matrices and vectors. Matrix itself is a reference type variable meaning that it is referred to by its place in the memory. Furthermore, data that a Matrix is holding is made abstract which allows very intuitive access to any submatrix where no references are lost. 
 
 ### Creating Matrices
 
@@ -69,7 +69,7 @@ print(A)
 
 ### Transpose
 
-Transpose is an operation on a matrix which effectively substitutes rows and columns. In Swift Linear Algebra it can be accessed through a property ``Matrix/T``.
+Transpose is an operation on a matrix which effectively substitutes rows and columns. In Swift Algebra it can be accessed through a property ``Matrix/T``.
 ```swift
 print(A.T)
 // Prints "[[2.5, 0], [2.5, 0], [3, 1]]"

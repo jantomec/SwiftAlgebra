@@ -1,4 +1,4 @@
-# SwiftLinearAlgebra
+# SwiftAlgebra
 
 A small standalone package for linear algebra.
 
@@ -16,7 +16,7 @@ https://developer.apple.com/documentation/swift_packages/adding_package_dependen
 
 ## Requirements
 
-SwiftLinearAlgebra includes only pure Swift code making this package cross-platform. The latest version of Swift is recommended, while Swift 5.5 is the minimum requirement.
+_SwiftAlgebra_ includes only pure Swift code making this package cross-platform. The latest version of Swift is recommended, while Swift 5.5 is the minimum requirement.
 
 ## Usage
 
