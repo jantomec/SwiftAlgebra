@@ -1,6 +1,6 @@
 # SwiftAlgebra
 
-A small standalone package for linear algebra.
+A small standalone package for linear algebra and Lie groups.
 
 ## Features
 
@@ -9,6 +9,7 @@ Currenlty supported features:
 - Advanced slicing
 - Arithmetic operations on matrices
 - Linear algebra (inverse and solve using LU decomposition)
+- Lie groups and operations on them
 
 ## Installation
 
