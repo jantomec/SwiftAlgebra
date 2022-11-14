@@ -58,6 +58,8 @@ Note that we marked matrix `C` as `var` while `I` and `B` were also manipulated 
 
 I know, symbols '∙' and '≈' are a bit tedious to type, but! Many editors including _Xcode_ allow snippets which can make the coding very simple while the beautiful syntax remains. [Here](https://sarunw.com/posts/how-to-create-code-snippets-in-xcode/) is a link on how to do it in Xcode.
 
+All code is documented using [DocC](https://developer.apple.com/documentation/docc). The code to the documentation is also available so that if you make any changes, you can simply adopt the docs as well. Since all code is open-source, the documentation on this repository is not yet compiled.
+
 ## Contribution
 
 Contact me personally.
