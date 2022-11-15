@@ -60,6 +60,71 @@ I know, symbols '∙' and '≈' are a bit tedious to type, but! Many editors inc
 
 All code is documented using [DocC](https://developer.apple.com/documentation/docc). The code to the documentation is also available so that if you make any changes, you can simply adopt the docs as well. Since all code is open-source, the documentation on this repository is not yet compiled.
 
+### Running examples
+
+_Swift Package Manager_ allows you to include this package in executables or in other packages like this one.
+Assuming you have _Swift_ and _Swift Package Manager_ installed, follow these steps to create an example command line app:
+
+1. In _Terminal_, go to your working directory and create a new folder.
+
+```shell
+mkdir SomeCalculations
+cd SomeCalculations
+```
+
+2. Create a new package there.
+
+```shell
+swift package init --type executable --name SomeCalculations
+```
+
+3. Add dependency on _Fiber_ by editing `SomeCalculations/Package.swift`.
+
+```swift
+// swift-tools-version: 5.7
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: "SomeCalculations",
+    dependencies: [
+        // Dependencies declare other packages that this package depends on.
+        .package(url: "https://github.com/tomecj/SwiftAlgebra", from: "2.0.0"),
+    ],
+    targets: [
+        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
+        // Targets can depend on other targets in this package, and on products in packages this package depends on.
+        .executableTarget(
+            name: "SomeCalculations",
+            dependencies: ["SwiftAlgebra"]),
+        .testTarget(
+            name: "SomeCalculationsTests",
+            dependencies: ["SomeCalculations"]),
+    ]
+)
+```
+
+4. Edit source code in `SomeCalculations/Sources/SomeCalculations/SomeCalculations.swift`
+
+```swift
+import SwiftAlgebra
+
+@main
+public struct SomeCalculations {
+    public private(set) var text = "Hello, World!"
+
+    public static func main() {
+        print(SomeCalculations().text)
+        let A = Matrix(identity: 3)
+        let B = Matrix(from: [[1, 2, 3]]).T
+        print (A ∙ B)
+    }
+}
+```
+
+<!--Find some examples [here](abc.com)!-->
+
 ## Contribution
 
 Contact me personally.
