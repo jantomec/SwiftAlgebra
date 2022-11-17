@@ -89,7 +89,18 @@ final class LinearAlgebraTests: XCTestCase {
         let x = Matrix(from: [[-0.4494608992983296, 0.1766566088810417, 0.3831939999287645]])
         XCTAssert(try solve(A: a[0...2,0...2], b: b[.all,1]) ≈ x.T)
     }
-
+    
+    func testBlocksInit() throws {
+        let I = Matrix(identity: 3)
+        let O = Matrix(repeating: 0, shape: (3,1))
+        let A = Matrix(blocks: [[I, O],
+                                [O.T, Matrix(from: [[2]])]])
+        let e = Matrix(from: [[1, 0, 0, 0],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 0],
+                              [0, 0, 0, 2]])
+        XCTAssert(e ≈ A)
+    }
 }
 
 
@@ -233,5 +244,4 @@ final class LieGroupsTests: XCTestCase {
         XCTAssert(antitilde(tilde(a)) ≈ a)
         XCTAssert(anticheck(check(a)) ≈ a)
     }
-    
 }

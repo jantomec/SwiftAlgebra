@@ -20,9 +20,20 @@ public enum SpecialMatrixIndex {
 }
 
 private func isMatrix(_ A: [[Double]]) -> Bool {
-    let A0: Int = A[0].count
-    for i in 0..<A.count {
-        if A[i].count != A0 { return false }
+    for i in 1..<A.count {
+        if A[i].count != A[0].count { return false }
+    }
+    return true
+}
+
+private func isCoherent(_ A: [[Matrix]]) -> Bool {
+    let cumcols: ([Matrix]) -> Int = { matrixRow in
+        return matrixRow.reduce(0) { partialResult, block in
+            partialResult + block.shape.cols
+        }
+    }
+    for i in 1..<A.count {
+        if cumcols(A[i]) != cumcols(A[0]) { return false }
     }
     return true
 }
@@ -129,6 +140,41 @@ public class Matrix {
             }
         }
         self.init(from: c)
+    }
+    
+    /// Create a matrix from coherent blocks. Coherency can be visualized as drawing only straight division lines across the entire matrix.
+    ///
+    /// Example:
+    /// ```swift
+    /// let I = Matrix(identity: 3)
+    /// let O = Matrix(repeating: 0, shape: (3,1))
+    /// let A = Matrix(blocks: [[I, O],
+    ///                         [O.T, Matrix(from: [[2]])]])
+    /// ```
+    /// - Parameter blocks: Blocks of coherent submatrices
+    /// - Parameter copy: Whether the data should be copied or should the references remain. They are copied by default.
+    public convenience init(blocks: [[Matrix]], copy: Bool = true) {
+        precondition(isCoherent(blocks), "Blocks are not coherent.")
+        let cumrows = blocks.reduce(0) { partialResult, subrow in
+            partialResult + subrow[0].shape.rows
+        }
+        let cumcols = blocks[0].reduce(0) { partialResult, block in
+            partialResult + block.shape.cols
+        }
+        self.init(repeating: 0, shape: (cumrows, cumcols))
+        var cumrow = 0
+        for row in 0..<blocks.count {
+            var cumcol = 0
+            for col in 0..<blocks[0].count {
+                if copy {
+                    self[cumrow..<cumrow+blocks[row][col].shape.rows, cumcol..<cumcol+blocks[row][col].shape.cols] = Matrix(copy: blocks[row][col])
+                } else {
+                    self[cumrow..<cumrow+blocks[row][col].shape.rows, cumcol..<cumcol+blocks[row][col].shape.cols] = blocks[row][col]
+                }
+                cumcol += blocks[row][col].shape.cols
+            }
+            cumrow += blocks[row][0].shape.rows
+        }
     }
     
     public subscript(row: Int, col: Int) -> Double {
