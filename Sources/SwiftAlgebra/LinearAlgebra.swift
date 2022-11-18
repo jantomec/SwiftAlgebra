@@ -16,10 +16,8 @@ public enum LinearAlgebraError: Error {
 ///
 /// - Precondition: "Trace is defined only on square matrices."
 ///
-/// - Parameters:
-///   - A: Matrix
-///
-/// - Returns: Trace of matrix.
+/// - Parameter A: Square matrix
+/// - Returns: Trace of matrix
 public func trace(_ A: Matrix) -> Double {
     precondition(A.shape.rows == A.shape.cols, "Trace is defined only on square matrices.")
     var tr: Double = 0
@@ -27,6 +25,27 @@ public func trace(_ A: Matrix) -> Double {
         tr += A[row,row]
     }
     return tr
+}
+
+/// Compute determinant of matrix
+///
+/// - Precondition: "Determinant is defined only on square matrices."
+///
+/// - Parameter A: Square matrix
+/// - Returns: Determinant of matrix
+public func det(_ A: Matrix) -> Double {
+    precondition(A.shape.rows == A.shape.cols, "Determinant is defined only on square matrices.")
+    if A.shape == (1,1) {
+        return A[0,0]
+    } else {
+        var d: Double = 0
+        for col in 0..<A.shape.cols {
+            var indices = Array(0..<A.shape.cols)
+            indices.remove(at: col)
+            d += pow(-1.0, Double(col)) * A[0,col] * det(A[1..<A.shape.rows,indices])
+        }
+        return d
+    }
 }
 
 private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
