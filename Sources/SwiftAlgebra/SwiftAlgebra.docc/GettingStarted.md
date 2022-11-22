@@ -36,7 +36,7 @@ let B = Matrix(copy: A)
 
 Next let's explore slicing. Elements of Matrix are accessed through a double indexed subscript.
 ```swift
-let A = Matrix(from: [[5, 2, 3], [-1, 0, 1]])
+var A = Matrix(from: [[5, 2, 3], [-1, 0, 1]])
 print(A[0,1])
 // Prints "2"
 ```

@@ -37,7 +37,7 @@ I[1...3,0...2] += 0.5 * (A + A.T)
 ```
 or even matrix multiplication
 ```swift
-let B = I[0...1,1...3]∙A[.all, 1...2]
+var B = I[0...1,1...3]∙A[.all, 1...2]
 ```
 We can also invert the matrix or solve a system of equations
 ```swift
@@ -52,7 +52,6 @@ print(I)
 C *= 2
 print(I)
 ```
-Note that we marked matrix `C` as `var` while `I` and `B` were also manipulated under `let`. This is because in the last example we replaced the reference of the `Matrix` instance, not individual values. Individual values can be changed through the subscript `[.all, .all]`.
 
 ## Extra Tips & Tricks
 

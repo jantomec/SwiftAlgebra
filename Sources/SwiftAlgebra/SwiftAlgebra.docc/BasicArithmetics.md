@@ -9,7 +9,7 @@ Basic arithmetic operations with Swift Algebra.
 ### Addition and subtraction
 
 ```swift
-let A = Matrix(from: [[5, 2], [-1, 0]])
+var A = Matrix(from: [[5, 2], [-1, 0]])
 print(A + A)
 // Prints "[[10, 4], [-2, 0]]"
 
