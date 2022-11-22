@@ -131,7 +131,7 @@ private func vectorSpace(of x: Matrix) -> VectorSpace {
 /// - Parameter x: Vector from R^3
 /// - Returns: Matrix in so(3)
 private func hatso3(_ x: Matrix) -> Matrix {
-    let hatX = Matrix(repeating: 0, shape: (rows: 3, cols: 3))
+    var hatX = Matrix(repeating: 0, shape: (rows: 3, cols: 3))
     hatX[2,1] = x[0,0]
     hatX[1,2] = -x[0,0]
     hatX[0,2] = x[1,0]
@@ -145,7 +145,7 @@ private func hatso3(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix from so(3)
 /// - Returns: Vector in R^3
 private func antihatso3(_ x: Matrix) -> Matrix {
-    let vecX = Matrix(repeating: 0, shape: (rows: 3, cols: 1))
+    var vecX = Matrix(repeating: 0, shape: (rows: 3, cols: 1))
     vecX[0,0] = x[2,1]
     vecX[1,0] = x[0,2]
     vecX[2,0] = x[1,0]
@@ -156,7 +156,7 @@ private func antihatso3(_ x: Matrix) -> Matrix {
 /// - Parameter x: Vector from R^6
 /// - Returns: Matrix in se(3)
 private func hatse3(_ x: Matrix) -> Matrix {
-    let hatX = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
+    var hatX = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
     hatX[0...2,0...2] = hatso3(x[3...5,0])
     hatX[0...2,3] = Matrix(copy: x[0...2,0])
     return hatX
@@ -166,7 +166,7 @@ private func hatse3(_ x: Matrix) -> Matrix {
 /// - Parameter x: Matrix from se(3)
 /// - Returns: Vector in R^6
 private func antihatse3(_ x: Matrix) -> Matrix {
-    let vecX = Matrix(repeating: 0, shape: (rows: 6, cols: 1))
+    var vecX = Matrix(repeating: 0, shape: (rows: 6, cols: 1))
     vecX[3...5,0] = antihatso3(x[0...2,0...2])
     vecX[0...2,0] = Matrix(copy: x[0...2,3])
     return vecX
@@ -232,7 +232,7 @@ public func adjoint(_ x: Matrix) -> Matrix {
     case .so3:
         return Matrix(copy: x)
     case .se3:
-        let a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
+        var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
         a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
         a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
         a[0...2,3...5] = hat(x[0...2,3])
@@ -240,7 +240,7 @@ public func adjoint(_ x: Matrix) -> Matrix {
     case .SO3:
         return Matrix(copy: x)
     case .SE3:
-        let a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
+        var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
         a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
         a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
         a[0...2,3...5] = hat(x[0...2,3])∙x[0...2,0...2]
@@ -266,14 +266,14 @@ public func antiadjoint(_ x: Matrix) -> Matrix {
     case .so3:
         return Matrix(copy: x)
     case .adse3:
-        let a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
+        var a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
         a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
         a[0...2,3] = antihat(x[0...2,3...5])
         return a
     case .SO3:
         return Matrix(copy: x)
     case .AdSE3:
-        let a = Matrix(identity: 4)
+        var a = Matrix(identity: 4)
         a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
         a[0...2,3] = antihat(x[0...2,3...5]∙x[0...2,0...2].T)
         return a
@@ -330,7 +330,7 @@ public func coadjoint(_ x: Matrix) -> Matrix {
     case .so3:
         return Matrix(copy: x)
     case .se3:
-        let a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
+        var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
         a[0...2,3...5] = hat(x[0...2,3])
         a[3...5,0...2] = hat(x[0...2,3])
         a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
@@ -356,7 +356,7 @@ public func anticoadjoint(_ x: Matrix) -> Matrix {
     case .so3:
         return Matrix(copy: x)
     case .coadse3:
-        let a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
+        var a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
         a[0...2,0...2] = Matrix(copy: x[3...5,3...5])
         a[0...2,3] = antihat(x[0...2,3...5])
         return a
@@ -483,7 +483,7 @@ private func tangso3(_ x: Matrix) -> Matrix {
 private func spurrier_quaternion_extraction(_ x: Matrix) -> Matrix {
     let tr = trace(x)
     let m = max(tr, x[0,0], x[1,1], x[2,2])
-    let q = Matrix(repeating: 0, shape: (rows: 4, cols: 1))
+    var q = Matrix(repeating: 0, shape: (rows: 4, cols: 1))
     switch m {
     case tr:
         q[0,0] = sqrt(1.0 + tr) / 2
@@ -527,7 +527,7 @@ private func logSO3(_ x: Matrix) -> Matrix {
 /// - Parameter x: se(3)
 /// - Returns: SE(3)
 private func expse3(_ x: Matrix) -> Matrix {
-    let e = Matrix(identity: 4)
+    var e = Matrix(identity: 4)
     e[0...2,0...2] = expso3(x[0...2,0...2])
     e[0...2,3] = tangso3(x[0...2,0...2]).T ∙ x[0...2,3]
     return e
@@ -540,7 +540,7 @@ private func tangse3(_ x: Matrix) -> Matrix {
     let tolerance = 1e-3
     let b = sqrt(-0.25*trace(x**2))
     if b < tolerance { return tangseries(x) }
-    let e = Matrix(identity: 6)
+    var e = Matrix(identity: 6)
     e[0...2,0...2] = tangso3(x[0...2,0...2])
     e[3...5,3...5] = tangso3(x[3...5,3...5])
     let c = -1/2 * trace(x[0...2,0...2] ∙ x[0...2,3...5])
@@ -561,7 +561,7 @@ private func tangse3(_ x: Matrix) -> Matrix {
 /// - Parameter x: SE(3)
 /// - Returns: se(3)
 private func logSE3(_ x: Matrix) -> Matrix {
-    let m = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
+    var m = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
     m[0...2,0...2] = logSO3(x[0...2,0...2])
     m[0...2,3] = tangso3(m[0...2,0...2]).T**(-1) ∙ x[0...2,3]
     return m

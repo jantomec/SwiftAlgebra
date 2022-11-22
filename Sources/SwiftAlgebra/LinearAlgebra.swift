@@ -50,7 +50,7 @@ public func det(_ A: Matrix) -> Double {
 
 private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
     precondition(A.shape.rows == A.shape.cols, "LU decomposition requires a square matrix.")
-    let LU = Matrix(copy: A)
+    var LU = Matrix(copy: A)
     let n = LU.shape.rows
     var P: [Int] = Array(0...n)
     var maxA: Double
@@ -94,7 +94,7 @@ private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) th
 }
 
 private func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
-    let x = Matrix(copy: b)
+    var x = Matrix(copy: b)
     let n = LU.shape.rows
     precondition(n == LU.shape.cols, "LU decomposition requires a square matrix.")
     for i in 0..<n {
@@ -130,7 +130,7 @@ public func solve(A: Matrix, b: Matrix) throws -> Matrix {
 }
 
 private func LUInvert(LU: Matrix, P: [Int]) -> Matrix {
-    let IA = Matrix(copy: LU)
+    var IA = Matrix(copy: LU)
     let n = LU.shape.rows
     precondition(n == LU.shape.cols, "LU decomposition requires a square matrix.")
     for j in 0..<n {

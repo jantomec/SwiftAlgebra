@@ -41,7 +41,7 @@ private func isCoherent(_ A: [[Matrix]]) -> Bool {
 /// Basic class for representing matrices.
 ///
 /// This class provides an intuitive abstract representation of a mathematical object called matrix. It references the data through pointers permitting advanced manipulation through slicing.
-public class Matrix {
+public struct Matrix {
     private var data: [Datum]
     
     /// Shape of the matrix.
@@ -69,7 +69,7 @@ public class Matrix {
     ///
     /// - Precondition: The input must represent a matrix (all rows should have equal length).
     /// - Parameter values: Double array of data.
-    public convenience init(from values: [[Double]]) {
+    public init(from values: [[Double]]) {
         precondition(isMatrix(values), "Input argument is not a matrix.")
         let shape = (values.count, values[0].count)
         let data = Array(values.joined())
@@ -89,7 +89,7 @@ public class Matrix {
     /// - Parameters:
     ///   - value: Value to be repeated.
     ///   - shape: Desired shape of the matrix.
-    public convenience init(repeating value: Double, shape: (rows: Int, cols: Int)) {
+    public init(repeating value: Double, shape: (rows: Int, cols: Int)) {
         self.init(from: Array(repeating: Array(repeating: value, count: shape.cols), count: shape.rows))
     }
     
@@ -100,7 +100,7 @@ public class Matrix {
     /// let A = Matrix(diagonal: [5, 2, -1, 0])
     /// ```
     /// - Parameter diagonal: Array of diagonal elements.
-    public convenience init(diagonal: [Double]) {
+    public init(diagonal: [Double]) {
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
         for i in 0..<diagonal.count {
             self[i,i] = diagonal[i]
@@ -115,7 +115,7 @@ public class Matrix {
     /// ```
     ///
     /// - Parameter n: Dimension of the matrix.
-    public convenience init(identity n: Int) {
+    public init(identity n: Int) {
         let diagonal = Array(repeating: 1.0, count: n)
         self.init(repeating: 0, shape: (diagonal.count, diagonal.count))
         for i in 0..<diagonal.count {
@@ -132,7 +132,7 @@ public class Matrix {
     /// ```
     ///
     /// - Parameter matrix: A Matrix to be copied.
-    public convenience init(copy matrix: Matrix) {
+    public init(copy matrix: Matrix) {
         var c: [[Double]] = Array(repeating: Array(repeating: 0, count: matrix.shape.cols), count: matrix.shape.rows)
         for row in 0..<matrix.shape.rows {
             for col in 0..<matrix.shape.cols {
@@ -153,7 +153,7 @@ public class Matrix {
     /// ```
     /// - Parameter blocks: Blocks of coherent submatrices
     /// - Parameter copy: Whether the data should be copied or should the references remain. They are copied by default.
-    public convenience init(blocks: [[Matrix]], copy: Bool = true) {
+    public init(blocks: [[Matrix]], copy: Bool = true) {
         precondition(isCoherent(blocks), "Blocks are not coherent.")
         let cumrows = blocks.reduce(0) { partialResult, subrow in
             partialResult + subrow[0].shape.rows
@@ -369,7 +369,7 @@ infix operator ≈: ComparisonPrecedence
 extension Matrix {
     public static func +(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape == b.shape, "The shape of both matrices should be the same.")
-        let c = Matrix(repeating: 0, shape: a.shape)
+        var c = Matrix(repeating: 0, shape: a.shape)
         for row in 0..<c.shape.rows {
             for col in 0..<c.shape.cols {
                 c[row,col] = a[row,col] + b[row,col]
@@ -389,7 +389,7 @@ extension Matrix {
     
     public static func -(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape == b.shape, "The shape of both matrices should be the same.")
-        let c = Matrix(repeating: 0, shape: a.shape)
+        var c = Matrix(repeating: 0, shape: a.shape)
         for row in 0..<c.shape.rows {
             for col in 0..<c.shape.cols {
                 c[row,col] = a[row,col] - b[row,col]
@@ -408,7 +408,7 @@ extension Matrix {
     }
     
     public static func *(a: Double, b: Matrix) -> Matrix {
-        let c = Matrix(copy: b)
+        var c = Matrix(copy: b)
         for row in 0..<c.shape.rows {
             for col in 0..<c.shape.cols {
                 c[row,col] *= a
@@ -418,7 +418,7 @@ extension Matrix {
     }
     
     public static func *(b: Matrix, a: Double) -> Matrix {
-        let c = Matrix(copy: b)
+        var c = Matrix(copy: b)
         for row in 0..<c.shape.rows {
             for col in 0..<c.shape.cols {
                 c[row,col] *= a
@@ -436,7 +436,7 @@ extension Matrix {
     }
     
     public static func /(b: Matrix, a: Double) -> Matrix {
-        let c = Matrix(copy: b)
+        var c = Matrix(copy: b)
         for row in 0..<c.shape.rows {
             for col in 0..<c.shape.cols {
                 c[row,col] /= a
@@ -447,7 +447,7 @@ extension Matrix {
     
     public static func ∙(a: Matrix, b: Matrix) -> Matrix {
         precondition(a.shape.cols == b.shape.rows, "The number of columns in the first matrix should equal the number of rows in the second.")
-        let c = Matrix(repeating: 0, shape: (a.shape.rows, b.shape.cols))
+        var c = Matrix(repeating: 0, shape: (a.shape.rows, b.shape.cols))
         for i in 0..<a.shape.rows {
             for j in 0..<b.shape.cols {
                 for k in 0..<a.shape.cols {
@@ -493,7 +493,7 @@ extension Matrix {
     /// Transpose of a matrix
     public var T: Matrix {
         get {
-            let c = Matrix(repeating: 0, shape: (rows: self.shape.cols, cols: self.shape.rows))
+            var c = Matrix(repeating: 0, shape: (rows: self.shape.cols, cols: self.shape.rows))
             for row in 0..<self.shape.rows {
                 for col in 0..<self.shape.cols {
                     c[col,row] = self[row,col]

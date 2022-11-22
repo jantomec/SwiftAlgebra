@@ -19,7 +19,7 @@ final class LinearAlgebraTests: XCTestCase {
     }
     
     func testReferencing() throws {
-        let a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
+        var a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
             4.3, -9.4]])
         let b = a[.all, 0...2]
         a[0,0] = 100
@@ -29,7 +29,7 @@ final class LinearAlgebraTests: XCTestCase {
     }
     
     func testCopying() throws {
-        let a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
+        var a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
             4.3, -9.4]])
         let b = Matrix(copy: a[.all, 0...2])
         a[0,0] = 100
@@ -39,7 +39,7 @@ final class LinearAlgebraTests: XCTestCase {
     }
     
     func testArithmetics() throws {
-        let a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
+        var a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
             4.3, -9.4]])
         let b = Matrix(from: [[-6.1, 1.0, 9.3, -3.9], [-5.1, -6.3, 1.7, 6.2], [-0.6, 0.3,
             4.3, -3.4]])
