@@ -203,6 +203,7 @@ public struct Matrix {
                 self.data[row*self.shape.cols + col] = newValue.data[i*newValue.shape.cols + j]
                 j += 1
             }
+            precondition(j == newValue.shape.cols, "Matrices' shapes do not match: trying to overwrite selected shape \((1,cols)) with \(newValue.shape).")
         }
     }
     
@@ -223,6 +224,7 @@ public struct Matrix {
                 self.data[row*self.shape.cols + col] = newValue.data[i*newValue.shape.cols + j]
                 i += 1
             }
+            precondition(i == newValue.shape.rows, "Matrices' shapes do not match: trying to overwrite selected shape \((rows,1)) with \(newValue.shape).")
         }
     }
     
@@ -243,14 +245,16 @@ public struct Matrix {
         }
         set(newValue) {
             var i = 0
+            var j = 0
             for row in rows {
-                var j = 0
+                j = 0
                 for col in cols {
                     self.data[row*self.shape.cols + col] = newValue.data[i*newValue.shape.cols + j]
                     j += 1
                 }
                 i += 1
             }
+            precondition((i,j) == newValue.shape, "Matrices' shapes do not match: trying to overwrite selected shape \((rows,cols)) with \(newValue.shape).")
         }
     }
     

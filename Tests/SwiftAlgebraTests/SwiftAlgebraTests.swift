@@ -38,6 +38,19 @@ final class LinearAlgebraTests: XCTestCase {
         XCTAssert(b ≈ c)
     }
     
+    func testSetting() throws {
+        var a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
+            4.3, -9.4]])
+        var b = Matrix(from: [[3.5, 2.0, 2.0], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
+            4.3, -9.4]])
+        a[0,1...2] = Matrix(repeating: 2, shape: (1,2))
+        XCTAssert(a ≈ b)
+        b = Matrix(from: [[3.5, 2.0, 2.0], [2.0, -0.7, -6.5], [2.0, 9.3, -8.9], [0.4,
+            4.3, -9.4]])
+        a[1...2,0] = Matrix(repeating: 2, shape: (2,1))
+        XCTAssert(a ≈ b)
+    }
+    
     func testArithmetics() throws {
         var a = Matrix(from: [[3.5, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
             4.3, -9.4]])
