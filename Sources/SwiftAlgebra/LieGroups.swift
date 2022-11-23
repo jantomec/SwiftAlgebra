@@ -649,7 +649,7 @@ public func tang(_ x: Matrix) -> Matrix {
         return tangse3(adjoint(x))
     case .linear:
         if x.shape == (3,1) {
-            return tangso3(x)
+            return tangso3(hat(x))
         } else if x.shape == (6,1) {
             return tangse3(tilde(x))
         } else if x.shape.rows == x.shape.cols {

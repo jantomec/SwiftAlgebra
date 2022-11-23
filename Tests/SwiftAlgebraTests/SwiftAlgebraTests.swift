@@ -245,6 +245,7 @@ final class LieGroupsTests: XCTestCase {
            ])
         let d = tang(a2) - t2
         XCTAssert(trace(d ∙ d.T) < 1e-10)
+        XCTAssert(tang(a1[0...2,0]) ≈ tang(hat(a1[0...2,0])))
     }
     
     func testAdjoint() throws {
