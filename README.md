@@ -4,7 +4,7 @@ A small standalone package for linear algebra and Lie groups.
 
 ## Features
 
-Currenlty supported features:
+Currently supported features:
 - Vectors are treated as one-dimensional matrices
 - Advanced slicing
 - Arithmetic operations on matrices
