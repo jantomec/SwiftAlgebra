@@ -58,7 +58,7 @@ private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) th
     for i in 0..<n {
         maxA = 0.0
         imax = i
-        for k in i..<n {
+        for k in 0..<n {
             let absA = abs(A[k,i])
             if absA > maxA {
                 maxA = absA
