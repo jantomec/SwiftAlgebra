@@ -92,6 +92,15 @@ final class LinearAlgebraTests: XCTestCase {
                               [-0.017974848551911330,  0.001776010968341117,  0.043332031870502870]])
         XCTAssert(try invert(a) ≈ b)
         XCTAssert(a**(-1) ≈ b)
+        let c = Matrix(from: [[0, 0, -1, 0],
+                              [0, 1, 0, 0],
+                              [1, 0, 0, 0],
+                              [0, 0, 0, 1]])
+        let d = Matrix(from: [[0, 0, 1, 0],
+                              [0, 1, 0, 0],
+                              [-1, 0, 0, 0],
+                              [0, 0, 0, 1]])
+        XCTAssert(c**(-1) ≈ d)
     }
     
     func testSolving() throws {

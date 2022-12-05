@@ -52,43 +52,35 @@ private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) th
     precondition(A.shape.rows == A.shape.cols, "LU decomposition requires a square matrix.")
     var LU = Matrix(copy: A)
     let n = LU.shape.rows
-    var P: [Int] = Array(0...n)
-    var maxA: Double
-    var imax: Int
+    var P: [Int] = Array(0..<n)
+    // Set up scale factors
+    var s = Array(repeating: 0.0, count: n)
     for i in 0..<n {
-        maxA = 0.0
-        imax = i
-        for k in 0..<n {
-            let absA = abs(A[k,i])
-            if absA > maxA {
-                maxA = absA
-                imax = k
-            }
-        }
-        if maxA < tolerance {
-            throw LinearAlgebraError.degenerateMatrix
-        }
-        if imax != i {
-            // pivoting P
-            let j = P[i]
-            P[i] = P[imax]
-            P[imax] = j
-            // pivoting rows of LU
-            let ptr = Matrix(copy: LU[i, .all])
-            LU[i, .all] = LU[imax, .all]
-            LU[imax, .all] = ptr
-            // counting pivots starting from N (for determinant)
-            P[n] += 1
-        }
-        for j in i+1..<n {
-            LU[j,i] /= LU[i,i];
-            for k in i+1..<n {
-                LU[j,k] -= LU[j,i] * LU[i,k];
-            }
-        }
+        s[i] = LU[i,.all].toArray()[0].map({ abs($0) }).max()!
     }
-    for i in 0..<n {
-        if LU[i,i] == 0 { throw LinearAlgebraError.singularMatrix }
+    for k in 0..<n-1 {
+        // Row interchange, if needed
+        let scaledColumn = LU[k..<n, k].toFlatArray().enumerated().map { abs($0.element) / s[$0.offset+k] }
+        let p = scaledColumn.enumerated().max { $0.element < $1.element }!.offset + k
+        print(LU, p, k)
+        if abs(LU[p,k]) < tolerance {
+            throw LinearAlgebraError.singularMatrix
+        }
+        if p != k {
+            s.swapAt(k, p)
+            let LUk = Matrix(copy: LU[k,.all])
+            LU[k,.all] = LU[p,.all]
+            LU[p,.all] = LUk
+            P.swapAt(k, p)
+        }
+        // Elimination
+        for i in k+1..<n {
+            if LU[i,k] != 0.0 {
+                let lam = LU[i,k] / LU[k,k]
+                LU[i,k+1..<n] = LU[i,k+1..<n] - lam * LU[k,k+1..<n]
+                LU[i,k] = lam
+            }
+        }
     }
     return (LU, P)
 }

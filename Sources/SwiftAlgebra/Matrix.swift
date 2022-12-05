@@ -527,4 +527,15 @@ extension Matrix {
         }
         return a
     }
+    
+    /// Extract the flattened standard Swift array representation of this matrix.
+    public func toFlatArray() -> [Double] {
+        var a: [Double] = Array(repeating: 0, count: self.shape.rows*self.shape.cols)
+        for row in 0..<self.shape.rows {
+            for col in 0..<self.shape.cols {
+                a[row*self.shape.cols+col] = self[row,col]
+            }
+        }
+        return a
+    }
 }
