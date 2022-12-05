@@ -533,7 +533,7 @@ extension Matrix {
         var a: [Double] = Array(repeating: 0, count: self.shape.rows*self.shape.cols)
         for row in 0..<self.shape.rows {
             for col in 0..<self.shape.cols {
-                a[row*self.shape.cols+col] = self[row,col]
+                a[row+col] = self[row,col]
             }
         }
         return a

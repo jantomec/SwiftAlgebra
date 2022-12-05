@@ -62,7 +62,6 @@ private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) th
         // Row interchange, if needed
         let scaledColumn = LU[k..<n, k].toFlatArray().enumerated().map { abs($0.element) / s[$0.offset+k] }
         let p = scaledColumn.enumerated().max { $0.element < $1.element }!.offset + k
-        print(LU, p, k)
         if abs(LU[p,k]) < tolerance {
             throw LinearAlgebraError.singularMatrix
         }
