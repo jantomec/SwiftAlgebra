@@ -123,6 +123,54 @@ final class LinearAlgebraTests: XCTestCase {
                               [0, 0, 0, 2]])
         XCTAssert(e ≈ A)
     }
+    
+    func testVectorNorm() throws {
+        let v = Matrix(from: [[1,2,3]])
+        let n = sqrt(1+4+9)
+        XCTAssert(abs(norm(v) - n) < 1e-10)
+        XCTAssert(abs(norm(v.T) - n) < 1e-10)
+    }
+    
+    func testQRDecomposition() throws {
+        let A1 = Matrix(from: [[1, 1, 0],
+                               [1, 0, 1],
+                               [0, 1, 1]])
+        let Q1 = Matrix(from: [[1/sqrt(2), 1/sqrt(6), -1/sqrt(3)],
+                               [1/sqrt(2), -1/sqrt(6), 1/sqrt(3)],
+                               [0, sqrt(2/3), 1/sqrt(3)]])
+        let R1 = Matrix(from: [[sqrt(2), 1/sqrt(2), 1/sqrt(2)],
+                               [0, sqrt(3/2), 1/sqrt(6)],
+                               [0, 0, 2/sqrt(3)]])
+        let QR1 = QRDecompositionGramSchmidt(A1)
+        XCTAssert(QR1.Q ≈ Q1)
+        XCTAssert(QR1.R ≈ R1)
+        let A2 = Matrix(from: [[1, 1, 0],
+                               [1, 0, 1]])
+        let Q2 = Matrix(from: [[1/sqrt(2), 1/sqrt(2)],
+                               [1/sqrt(2), -1/sqrt(2)]])
+        let R2 = Matrix(from: [[sqrt(2), 1/sqrt(2), 1/sqrt(2)],
+                               [0, sqrt(1/2), -1/sqrt(2)]])
+        let QR2 = QRDecompositionGramSchmidt(A2)
+        XCTAssert(QR2.Q ≈ Q2)
+        XCTAssert(QR2.R ≈ R2)
+        let Q3 = Matrix(from: [[1/sqrt(2), 1/sqrt(6)],
+                               [1/sqrt(2), -1/sqrt(6)],
+                               [0, sqrt(2/3)]])
+        let R3 = Matrix(from: [[sqrt(2), 1/sqrt(2)],
+                               [0, sqrt(3/2)]])
+        let QR3 = QRDecompositionGramSchmidt(A2.T)
+        XCTAssert(QR3.Q ≈ Q3)
+        XCTAssert(QR3.R ≈ R3)
+    }
+    
+    func testEigenvalues() throws {
+        let A1 = Matrix(from: [[1, 1, 0],
+                               [1, 0, 1],
+                               [0, 1, 1]])
+        let E1 = [2.0, 1.0, -1.0]
+        let eig1 = try eigenvalues(A1)
+        XCTAssert(Matrix(from: [eig1]) ≈ Matrix(from: [E1]))
+    }
 }
 
 

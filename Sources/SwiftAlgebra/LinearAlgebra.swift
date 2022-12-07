@@ -10,6 +10,7 @@ import Foundation
 public enum LinearAlgebraError: Error {
     case degenerateMatrix
     case singularMatrix
+    case slowConvergence
 }
 
 /// Compute trace of matrix.
@@ -25,6 +26,20 @@ public func trace(_ A: Matrix) -> Double {
         tr += A[row,row]
     }
     return tr
+}
+
+/// Compute norm of matrix
+/// - Parameter A:
+/// - Returns: Spectral norm (Euclidean norm for vectors)
+public func norm(_ A: Matrix) -> Double {
+    switch A.shape {
+    case (_, 1):
+        return sqrt(trace(A.T ∙ A))
+    case (1, _):
+        return sqrt(trace(A ∙ A.T))
+    default:
+        return sqrt((try? eigenvalues(A.T ∙ A))?.max() ?? 0)
+    }
 }
 
 /// Compute determinant of matrix
@@ -48,7 +63,7 @@ public func det(_ A: Matrix) -> Double {
     }
 }
 
-private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
+internal func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) throws -> (LU: Matrix, P: [Int]) {
     precondition(A.shape.rows == A.shape.cols, "LU decomposition requires a square matrix.")
     var LU = Matrix(copy: A)
     let n = LU.shape.rows
@@ -84,7 +99,7 @@ private func LUDecompositionDoolittle(_ A: Matrix, tolerance: Double = 1e-10) th
     return (LU, P)
 }
 
-private func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
+internal func LUSolve(LU: Matrix, P: [Int], b: Matrix) -> Matrix {
     var x = Matrix(copy: b)
     let n = LU.shape.rows
     precondition(n == LU.shape.cols, "LU decomposition requires a square matrix.")
@@ -152,4 +167,58 @@ private func LUInvert(LU: Matrix, P: [Int]) -> Matrix {
 public func invert(_ A: Matrix) throws -> Matrix {
     let decomposition = try LUDecompositionDoolittle(A)
     return LUInvert(LU: decomposition.LU, P: decomposition.P)
+}
+
+private func normalize(_ vector: Matrix) -> Matrix {
+    let n = norm(vector)
+    if n == 0.0 {
+        return vector
+    } else {
+        return vector / norm(vector)
+    }
+}
+
+internal func QRDecompositionGramSchmidt(_ A: Matrix) -> (Q: Matrix, R: Matrix) {
+    var Q = Matrix(copy: A)[.all,0..<min(A.shape.rows, A.shape.cols)]
+    let m = min(A.shape.rows, A.shape.cols)
+    for k in 0..<m {
+        for j in 0..<k {
+            Q[.all,k] -= trace(A[.all,k].T ∙ Q[.all,j]) * Q[.all,j]
+        }
+        Q[.all,k] = normalize(Q[.all,k])
+    }
+    var R = 0 * A[0..<m, .all]
+    for k in 0..<A.shape.cols {
+        for j in 0...min(k, m-1) {
+            R[j,k] = trace(A[.all,k].T ∙ Q[.all,j])
+        }
+    }
+    return (Q, R)
+}
+
+internal func modifiedQRAlgorithm(_ A: Matrix, tolerance: Double, maxiter: Int) throws -> [Double] {
+    precondition(A.shape.rows == A.shape.cols, "Only squared matrices are allowed.")
+    var eigvals = [Double]()
+    var T = Matrix(copy: A)
+    for _ in 0...maxiter {
+        let n = T.shape.rows
+        let c = T[n-1,n-1]
+        T = T - c * Matrix(identity: n)
+        let (Q, R) = QRDecompositionGramSchmidt(T)
+        T = R ∙ Q + c * Matrix(identity: n)
+        if abs(norm(T[n-1,.all]) - abs(T[n-1,n-1])) < tolerance {
+            eigvals.append(T[n-1,n-1])
+            if n == 1 {
+                return eigvals
+            } else {
+                T = T[0..<n-1, 0..<n-1]
+            }
+        }
+    }
+    throw LinearAlgebraError.slowConvergence
+}
+
+public func eigenvalues(_ A: Matrix) throws -> [Double] {
+    let eigvals = try modifiedQRAlgorithm(A, tolerance: 1e-10, maxiter: 100)
+    return Array(eigvals.sorted().reversed())
 }
