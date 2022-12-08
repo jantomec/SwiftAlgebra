@@ -539,3 +539,23 @@ extension Matrix {
         return a
     }
 }
+
+extension Matrix {
+    /// Copy matrix, breaking the link to original matrix.
+    ///
+    /// Alias to `Matrix(copy: self)`
+    /// Explicit version of the same as doing
+    /// `A = Matrix(identity: 3)`
+    /// `B = Matrix(copy: A) // B = A.copy()` 
+    /// - Returns: Copy of a matrix
+    public func copy() -> Matrix { return Matrix(copy: self) }
+    
+    /// Create a new mirror to matrix, keeping the link to original matrix
+    ///
+    /// Alias to `self`.
+    /// Explicit version of the same as doing
+    /// `A = Matrix(identity: 3)`
+    /// `B = A // B = A.mirror()`
+    /// - Returns: Mirror of a matrix
+    public func mirror() -> Matrix { return self }
+}
