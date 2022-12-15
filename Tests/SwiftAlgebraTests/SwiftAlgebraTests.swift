@@ -274,6 +274,19 @@ final class LieGroupsTests: XCTestCase {
         XCTAssert(log(R2) ≈ hat(t2))
         XCTAssert(log(R3) ≈ hat(t3))
         XCTAssert(log(Matrix(identity: 6)) ≈ Matrix(repeating: 0, shape: (6,6)))
+        
+        let h0 = Matrix(from: [[-0.737239, 0.259194, 0.267328, -0.174328, -0.0116939, -0.187805]]).T
+        XCTAssert(log(exp(h0)) ≈ hat(h0))
+        let h1 = 1e-1 * h0
+        XCTAssert(log(exp(h1)) ≈ hat(h1))
+        let h2 = 1e-2 * h0
+        XCTAssert(log(exp(h2)) ≈ hat(h2))
+        let h3 = 1e-3 * h0
+        XCTAssert(log(exp(h3)) ≈ hat(h3))
+        let h4 = 1e-4 * h0
+        XCTAssert(log(exp(h4)) ≈ hat(h4))
+        let h5 = 1e-5 * h0
+        XCTAssert(log(exp(h5)) ≈ hat(h5))
     }
     
     func testTangentApplication() throws {

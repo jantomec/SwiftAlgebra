@@ -439,6 +439,7 @@ private func tangseries(_ x: Matrix) -> Matrix {
 /// - Parameter x: Square matrix
 /// - Returns: Linear space
 private func logseries(_ x: Matrix) -> Matrix {
+    print("LOGARITHM SERIES EXPANSION")
     var m = Matrix(repeating: 0, shape: x.shape)
     let I = Matrix(identity: x.shape.rows)
     let itermax = 15
@@ -455,11 +456,9 @@ private func logseries(_ x: Matrix) -> Matrix {
 /// - Parameter x: so(3)
 /// - Returns: SO(3)
 private func expso3(_ x: Matrix) -> Matrix {
-    let tolerance = 1e-12
+    let tolerance = 1e-3
     let n = sqrt(-0.5*trace(x**2))
-    if n < tolerance {
-        return Matrix(identity: 3)
-    }
+    if n < tolerance { return expseries(x) }
     let a = sin(n) / n
     let b = (1 - cos(n)) / n**2
     return Matrix(identity: 3) + a * x + b * x**2
