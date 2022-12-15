@@ -25,7 +25,7 @@ final class LinearAlgebraTests: XCTestCase {
         a[0,0] = 100
         let c = Matrix(from: [[100.0, 0.9, 6.3], [8.2, -0.7, -6.5], [-4.6, 9.3, -8.9], [0.4,
             4.3, -9.4]])
-        XCTAssert(b ≈ c)
+        XCTAssert((b ≈ c) == false)
     }
     
     func testCopying() throws {

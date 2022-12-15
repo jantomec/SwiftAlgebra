@@ -7,12 +7,12 @@
 
 import Foundation
 
-private class Datum {
-    var value: Double
-    init(value: Double) {
-        self.value = value
-    }
-}
+//private class Datum {
+//    var value: Double
+//    init(value: Double) {
+//        self.value = value
+//    }
+//}
 
 /// Special index which can be used to access all elements of a Matrix in a particular direction.
 public enum SpecialMatrixIndex {
@@ -42,7 +42,7 @@ private func isCoherent(_ A: [[Matrix]]) -> Bool {
 ///
 /// This class provides an intuitive abstract representation of a mathematical object called matrix. It references the data through pointers permitting advanced manipulation through slicing.
 public struct Matrix {
-    private var data: [Datum]
+    private var data: [Double]
     
     /// Shape of the matrix.
     ///
@@ -55,8 +55,8 @@ public struct Matrix {
         }
     }
     
-    private init(dataPtr: [Datum], shape: (rows: Int, cols: Int)) {
-        self.data = dataPtr
+    private init(data: [Double], shape: (rows: Int, cols: Int)) {
+        self.data = data
         self.shape = shape
     }
     
@@ -73,11 +73,7 @@ public struct Matrix {
         precondition(isMatrix(values), "Input argument is not a matrix.")
         let shape = (values.count, values[0].count)
         let data = Array(values.joined())
-        var dataPtr = [Datum]()
-        for i in 0..<data.count {
-            dataPtr.append(Datum(value: data[i]))
-        }
-        self.init(dataPtr: dataPtr, shape: shape)
+        self.init(data: data, shape: shape)
     }
     
     /// Create an instance of this class by repeating the same value.
@@ -179,22 +175,17 @@ public struct Matrix {
     
     public subscript(row: Int, col: Int) -> Double {
         get {
-            return self.data[row*self.shape.cols + col].value
+            return self.data[row*self.shape.cols + col]
         }
         set(newValue) {
-            self.data[row*self.shape.cols + col].value = newValue
+            self.data[row*self.shape.cols + col] = newValue
         }
     }
     
     public subscript<C: Sequence<Int>>(row: Int, cols: C) -> Matrix {
         get {
-            var subptr = [Datum]()
-            for col in cols {
-                subptr.append(self.data[row*self.shape.cols + col])
-            }
-            let subshape = (1, subptr.count)
-            let submatrix = Matrix(dataPtr: subptr, shape: subshape)
-            return submatrix
+            let subptr = cols.map { self.data[row*self.shape.cols + $0] }
+            return Matrix(data: subptr, shape: (1, subptr.count))
         }
         set(newValue) {
             let i = 0
@@ -209,13 +200,8 @@ public struct Matrix {
     
     public subscript<R: Sequence<Int>>(rows: R, col: Int) -> Matrix {
         get {
-            var subptr = [Datum]()
-            for row in rows {
-                subptr.append(self.data[row*self.shape.cols + col])
-            }
-            let subshape = (subptr.count, 1)
-            let submatrix = Matrix(dataPtr: subptr, shape: subshape)
-            return submatrix
+            let subptr = rows.map { self.data[$0*self.shape.cols + col] }
+            return Matrix(data: subptr, shape: (subptr.count, 1))
         }
         set(newValue) {
             var i = 0
@@ -230,7 +216,7 @@ public struct Matrix {
     
     public subscript<R: Sequence<Int>, C: Sequence<Int>>(rows: R, cols: C) -> Matrix {
         get {
-            var subptr = [Datum]()
+            var subptr = [Double]()
             var subshape = (rows: 0, cols: 0)
             for row in rows {
                 subshape.rows += 1
@@ -240,7 +226,7 @@ public struct Matrix {
                     subptr.append(self.data[row*self.shape.cols + col])
                 }
             }
-            let submatrix = Matrix(dataPtr: subptr, shape: subshape)
+            let submatrix = Matrix(data: subptr, shape: subshape)
             return submatrix
         }
         set(newValue) {
@@ -346,7 +332,7 @@ extension Matrix: CustomStringConvertible {
         for i in 0..<self.shape.rows {
             d += "["
             for j in 0..<self.shape.cols {
-                d += String(format: "%10.5f", self.data[i*self.shape.cols + j].value)
+                d += String(format: "%10.5f", self.data[i*self.shape.cols + j])
                 if j < self.shape.cols - 1 {
                     d += ", "
                 } else {
