@@ -317,7 +317,7 @@ public func tilde(_ x: Matrix) -> Matrix {
     return adjoint(hat(x))
 }
 
-public antitildese3(_ x: Matrix) -> Matrix {
+public func antitildese3(_ x: Matrix) -> Matrix {
     return antihatse3(antiadjointse3(x))
 }
 
@@ -355,8 +355,8 @@ public func coadjoint(_ x: Matrix) -> Matrix {
         return Matrix(copy: x)
     case .se3:
         var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
-        a[0...2,3...5] = hatse3(x[0...2,3])
-        a[3...5,0...2] = hatse3(x[0...2,3])
+        a[0...2,3...5] = hatso3(x[0...2,3])
+        a[3...5,0...2] = hatso3(x[0...2,3])
         a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
         return a
     default:
@@ -382,7 +382,7 @@ public func anticoadjoint(_ x: Matrix) -> Matrix {
     case .coadse3:
         var a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
         a[0...2,0...2] = Matrix(copy: x[3...5,3...5])
-        a[0...2,3] = antihatse3(x[0...2,3...5])
+        a[0...2,3] = antihatso3(x[0...2,3...5])
         return a
     default:
         fatalError("Matrix `x` must be a member of adjoint of either so(3) or se(3) Lie algebra or SO(3) or SE(3) Lie group.")
