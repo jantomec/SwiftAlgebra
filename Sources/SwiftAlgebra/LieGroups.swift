@@ -130,7 +130,7 @@ private func vectorSpace(of x: Matrix) -> VectorSpace {
 /// Hat map for so(3) Lie algebra
 /// - Parameter x: Vector from R^3
 /// - Returns: Matrix in so(3)
-private func hatso3(_ x: Matrix) -> Matrix {
+public func hatso3(_ x: Matrix) -> Matrix {
     var hatX = Matrix(repeating: 0, shape: (rows: 3, cols: 3))
     hatX[2,1] = x[0,0]
     hatX[1,2] = -x[0,0]
@@ -144,7 +144,7 @@ private func hatso3(_ x: Matrix) -> Matrix {
 /// Reverse from the hat map for so(3) Lie algebra
 /// - Parameter x: Matrix from so(3)
 /// - Returns: Vector in R^3
-private func antihatso3(_ x: Matrix) -> Matrix {
+public func antihatso3(_ x: Matrix) -> Matrix {
     var vecX = Matrix(repeating: 0, shape: (rows: 3, cols: 1))
     vecX[0,0] = x[2,1]
     vecX[1,0] = x[0,2]
@@ -155,7 +155,7 @@ private func antihatso3(_ x: Matrix) -> Matrix {
 /// Hat map for se(3) Lie algebra
 /// - Parameter x: Vector from R^6
 /// - Returns: Matrix in se(3)
-private func hatse3(_ x: Matrix) -> Matrix {
+public func hatse3(_ x: Matrix) -> Matrix {
     var hatX = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
     hatX[0...2,0...2] = hatso3(x[3...5,0])
     hatX[0...2,3] = Matrix(copy: x[0...2,0])
@@ -165,7 +165,7 @@ private func hatse3(_ x: Matrix) -> Matrix {
 /// Reverse from the hat map for se(3) Lie algebra
 /// - Parameter x: Matrix from se(3)
 /// - Returns: Vector in R^6
-private func antihatse3(_ x: Matrix) -> Matrix {
+public func antihatse3(_ x: Matrix) -> Matrix {
     var vecX = Matrix(repeating: 0, shape: (rows: 6, cols: 1))
     vecX[3...5,0] = antihatso3(x[0...2,0...2])
     vecX[0...2,0] = Matrix(copy: x[0...2,3])
@@ -212,6 +212,22 @@ public func antihat(_ x: Matrix) -> Matrix {
     }
 }
 
+public func adjointse3(_ x: Matrix) -> Matrix {
+    var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
+    a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
+    a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
+    a[0...2,3...5] = hatso3(x[0...2,3])
+    return a
+}
+
+public func adjointSE3(_ x: Matrix) -> Matrix {
+    var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
+    a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
+    a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
+    a[0...2,3...5] = hatso3(x[0...2,3])∙x[0...2,0...2]
+    return a
+}
+
 /// Maps a matrix from Lie algebra or Lie group to its adjoint representation.
 ///
 /// This function is specifically applicable to so(3), se(3)  SO(3) and SE(3).
@@ -232,22 +248,28 @@ public func adjoint(_ x: Matrix) -> Matrix {
     case .so3:
         return Matrix(copy: x)
     case .se3:
-        var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
-        a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
-        a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
-        a[0...2,3...5] = hat(x[0...2,3])
-        return a
+        return adjointse3(x)
     case .SO3:
         return Matrix(copy: x)
     case .SE3:
-        var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
-        a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
-        a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
-        a[0...2,3...5] = hat(x[0...2,3])∙x[0...2,0...2]
-        return a
+        return adjointSE3(x)
     default:
         fatalError("Matrix `x` must be a member of either so(3) or se(3) Lie algebra or SO(3) or SE(3) Lie group.")
     }
+}
+
+public func antiadjointse3(_ x: Matrix) -> Matrix {
+    var a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
+    a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
+    a[0...2,3] = antihatso3(x[0...2,3...5])
+    return a
+}
+
+public func antiadjointSE3(_ x: Matrix) -> Matrix {
+    var a = Matrix(identity: 4)
+    a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
+    a[0...2,3] = antihatso3(x[0...2,3...5]∙x[0...2,0...2].T)
+    return a
 }
 
 /// Maps a matrix from adjoint of Lie algebra or adjoint of Lie group to  Lie algebra or Lie group.
@@ -266,20 +288,18 @@ public func antiadjoint(_ x: Matrix) -> Matrix {
     case .so3:
         return Matrix(copy: x)
     case .adse3:
-        var a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
-        a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
-        a[0...2,3] = antihat(x[0...2,3...5])
-        return a
+        return antiadjointse3(x)
     case .SO3:
         return Matrix(copy: x)
     case .AdSE3:
-        var a = Matrix(identity: 4)
-        a[0...2,0...2] = Matrix(copy: x[0...2,0...2])
-        a[0...2,3] = antihat(x[0...2,3...5]∙x[0...2,0...2].T)
-        return a
+        return antiadjointSE3(x)
     default:
         fatalError("Matrix `x` must be a member of adjoint of either so(3) or se(3) Lie algebra or SO(3) or SE(3) Lie group.")
     }
+}
+
+public func tildese3(_ x: Matrix) -> Matrix {
+    return adjointse3(hatse3(x))
 }
 
 /// Maps a vector from linear space to adjoint representation of Lie algebra.
@@ -295,6 +315,10 @@ public func antiadjoint(_ x: Matrix) -> Matrix {
 /// - Returns: A new matrix, member of the adjoint of Lie algebra.
 public func tilde(_ x: Matrix) -> Matrix {
     return adjoint(hat(x))
+}
+
+public antitildese3(_ x: Matrix) -> Matrix {
+    return antihatse3(antiadjointse3(x))
 }
 
 /// Maps a matrix from adjoint of Lie algebra to  linear space.
@@ -331,8 +355,8 @@ public func coadjoint(_ x: Matrix) -> Matrix {
         return Matrix(copy: x)
     case .se3:
         var a = Matrix(repeating: 0, shape: (rows: 6, cols: 6))
-        a[0...2,3...5] = hat(x[0...2,3])
-        a[3...5,0...2] = hat(x[0...2,3])
+        a[0...2,3...5] = hatse3(x[0...2,3])
+        a[3...5,0...2] = hatse3(x[0...2,3])
         a[3...5,3...5] = Matrix(copy: x[0...2,0...2])
         return a
     default:
@@ -358,7 +382,7 @@ public func anticoadjoint(_ x: Matrix) -> Matrix {
     case .coadse3:
         var a = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
         a[0...2,0...2] = Matrix(copy: x[3...5,3...5])
-        a[0...2,3] = antihat(x[0...2,3...5])
+        a[0...2,3] = antihatse3(x[0...2,3...5])
         return a
     default:
         fatalError("Matrix `x` must be a member of adjoint of either so(3) or se(3) Lie algebra or SO(3) or SE(3) Lie group.")
@@ -455,7 +479,7 @@ private func logseries(_ x: Matrix) -> Matrix {
 /// Matrix exponential so(3)
 /// - Parameter x: so(3)
 /// - Returns: SO(3)
-private func expso3(_ x: Matrix) -> Matrix {
+public func expso3(_ x: Matrix) -> Matrix {
     let tolerance = 1e-3
     let n = sqrt(-0.5*trace(x**2))
     if n < tolerance { return expseries(x) }
@@ -467,7 +491,7 @@ private func expso3(_ x: Matrix) -> Matrix {
 /// Tangent application so(3)
 /// - Parameter x: ad(so(3)) = so(3)
 /// - Returns: R^3x3
-private func tangso3(_ x: Matrix) -> Matrix {
+public func tangso3(_ x: Matrix) -> Matrix {
     let tolerance = 1e-3
     let n = sqrt(-0.5*trace(x**2))
     if n < tolerance { return tangseries(x) }
@@ -507,10 +531,10 @@ private func spurrier_quaternion_extraction(_ x: Matrix) -> Matrix {
 /// Matrix logarithm SO(3)
 /// - Parameter x: SO(3)
 /// - Returns: so(3) with angle of rotation normalized between -π and π
-private func logSO3(_ x: Matrix) -> Matrix {
+public func logSO3(_ x: Matrix) -> Matrix {
     let q = spurrier_quaternion_extraction(x)
     let n = sqrt((q[1...3,0].T ∙ q[1...3,0])[0,0])
-    if n == 0 { return hat(q[1...3,0]) }
+    if n == 0 { return hatso3(q[1...3,0]) }
     var angle = 2 * atan2(n, q[0,0])
     // normalize angle to be within (-π, π)
     angle = angle.truncatingRemainder(dividingBy: 2*Double.pi)
@@ -519,13 +543,13 @@ private func logSO3(_ x: Matrix) -> Matrix {
     } else if angle < -Double.pi {
         angle += 2 * Double.pi
     }
-    return angle * hat(q[1...3,0]) / n
+    return angle * hatso3(q[1...3,0]) / n
 }
 
 /// Matrix exponential se(3)
 /// - Parameter x: se(3)
 /// - Returns: SE(3)
-private func expse3(_ x: Matrix) -> Matrix {
+public func expse3(_ x: Matrix) -> Matrix {
     var e = Matrix(identity: 4)
     e[0...2,0...2] = expso3(x[0...2,0...2])
     e[0...2,3] = tangso3(x[0...2,0...2]).T ∙ x[0...2,3]
@@ -535,7 +559,7 @@ private func expse3(_ x: Matrix) -> Matrix {
 /// Tangent application se(3)
 /// - Parameter x: adjoint se(3)
 /// - Returns: R^6x6
-private func tangse3(_ x: Matrix) -> Matrix {
+public func tangse3(_ x: Matrix) -> Matrix {
     let tolerance = 1e-3
     let b = sqrt(-0.25*trace(x**2))
     if b < tolerance { return tangseries(x) }
@@ -559,7 +583,7 @@ private func tangse3(_ x: Matrix) -> Matrix {
 /// Matrix logarithm SE(3)
 /// - Parameter x: SE(3)
 /// - Returns: se(3)
-private func logSE3(_ x: Matrix) -> Matrix {
+public func logSE3(_ x: Matrix) -> Matrix {
     var m = Matrix(repeating: 0, shape: (rows: 4, cols: 4))
     m[0...2,0...2] = logSO3(x[0...2,0...2])
     m[0...2,3] = tangso3(m[0...2,0...2]).T**(-1) ∙ x[0...2,3]
