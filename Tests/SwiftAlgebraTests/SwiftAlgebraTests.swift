@@ -318,6 +318,15 @@ final class LieGroupsTests: XCTestCase {
         let d = tang(a2) - t2
         XCTAssert(trace(d ∙ d.T) < 1e-10)
         XCTAssert(tang(a1[0...2,0]) ≈ tang(hat(a1[0...2,0])))
+        let a3 = Matrix(from: [[0, 1e-9, 0, 0, 0, 0]]).T
+        let t3 = Matrix(from: [[1.0, 0.0, 0.0, 0.0, 0.0, -5e-10],
+                               [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                               [0.0, 0.0, 1.0, 5e-10, 0.0, 0.0],
+                               [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                               [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                               [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
+        XCTAssert(t3 ≈ tang(a3))
+        XCTAssert(t3 ≈ tangse3(adjointse3(hatse3(a3))))
     }
     
     func testAdjoint() throws {

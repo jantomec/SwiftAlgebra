@@ -439,7 +439,7 @@ private func expseries(_ x: Matrix) -> Matrix {
     for i in 1..<itermax {
         let c = x**i / factorial(i)
         m += c
-        if sqrt(trace(c∙c.T)) < tolerance { break }
+        if norm(c) < tolerance { break }
     }
     return m
 }
@@ -454,7 +454,7 @@ private func tangseries(_ x: Matrix) -> Matrix {
     for i in 1..<itermax {
         let c = (-x)**i / factorial(i+1)
         m += c
-        if sqrt(trace(c∙c.T)) < tolerance { break }
+        if norm(c) < tolerance { break }
     }
     return m
 }
@@ -471,7 +471,7 @@ private func logseries(_ x: Matrix) -> Matrix {
     for i in 1..<itermax {
         let c = (-1)**(i+1) * (x - I)**i / Double(i)
         m += c
-        if sqrt(trace(c∙c.T)) < tolerance { break }
+        if norm(c) < tolerance { break }
     }
     return m
 }
