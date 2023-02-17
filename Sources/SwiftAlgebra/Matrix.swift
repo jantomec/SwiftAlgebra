@@ -425,6 +425,17 @@ extension Matrix {
         }
     }
     
+    public static func *(a: Matrix, b: Matrix) -> Matrix {
+        precondition(a.shape == b.shape, "Shapes of both matrices must match.")
+        var c = Matrix(copy: a)
+        for row in 0..<c.shape.rows {
+            for col in 0..<c.shape.cols {
+                c[row,col] *= b[row,col]
+            }
+        }
+        return c
+    }
+    
     public static func /(b: Matrix, a: Double) -> Matrix {
         var c = Matrix(copy: b)
         for row in 0..<c.shape.rows {
