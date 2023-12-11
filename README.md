@@ -77,7 +77,7 @@ cd SomeCalculations
 swift package init --type executable --name SomeCalculations
 ```
 
-3. Add dependency on _Fiber_ by editing `SomeCalculations/Package.swift`.
+3. Add dependency on _SwiftAlgebra_ by editing `SomeCalculations/Package.swift`.
 
 ```swift
 // swift-tools-version: 5.7
@@ -89,7 +89,7 @@ let package = Package(
     name: "SomeCalculations",
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/tomecj/SwiftAlgebra", from: "2.0.0"),
+        .package(url: "https://github.com/tomecj/SwiftAlgebra", from: "4.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
